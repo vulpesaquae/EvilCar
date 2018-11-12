@@ -10,6 +10,7 @@ namespace EvilCar
     {
         static void Main(string[] args)
         {
+            Console.WriteLine("nice");
         }
     }
 }

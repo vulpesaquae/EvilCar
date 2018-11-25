@@ -44,7 +44,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Administrator.cs" />
+    <Compile Include="Branch.cs" />
     <Compile Include="Car.cs" />
+    <Compile Include="Fleet.cs" />
     <Compile Include="FleetManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

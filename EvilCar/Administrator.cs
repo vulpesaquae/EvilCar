@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace EvilCar
 {
-    class Administrator
+    class Administrator : Profile
     {
         public bool Admin_Create(string name, string password)
         {

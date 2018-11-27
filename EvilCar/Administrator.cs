@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace EvilCar
 {
@@ -10,8 +11,47 @@ namespace EvilCar
     {
         public Administrator(string name) : base(name) {}
 
-        public bool Admin_Create(string name, string password)
+        public void Console()
         {
+            System.Console.WriteLine("Please choose one of the options:");
+            System.Console.WriteLine("<1> Create a new administrator");
+
+            switch(System.Console.ReadKey().KeyChar)
+            {
+                case '1': Admin_Create(); break;
+            }
+        }
+
+        public bool Admin_Create()
+        {
+            System.Console.WriteLine("\n\nCreate a new administartor!");
+
+            System.Console.Write("Username: ");
+            var username = System.Console.ReadLine();
+
+            System.Console.Write("Password: ");
+            var password = System.Console.ReadLine();
+
+            System.Console.Write($"Create new admin \"{username}\"? yes - <y>, no - <n>: ");
+            if(System.Console.ReadKey().Key == ConsoleKey.Y)
+            {
+                XDocument xmlDoc = XDocument.Load("Profiles.xml");
+
+                if(xmlDoc.Descendants("Profile").SingleOrDefault(x => x.Element("Name").Value.Equals(username)) == null)
+                {
+                    System.Console.WriteLine("\nWurde noch nicht erstellt. Muss mir erstmal noch XmlReader und XmlWriter anschauen. Da kann man wohl auch schon direkt mit Base64 arbeite. Würden wir die extra funktionen nicht benötigen und das Login könnte auch in die UserType Klasse.");
+                }
+                else
+                {
+                    System.Console.WriteLine("\nThe user already exists.");
+                }
+
+            }
+            else
+            {
+                System.Console.WriteLine("\nCanceled to create new administrator.");
+            }
+
             throw new NotImplementedException();
         }
 

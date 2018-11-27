@@ -34,6 +34,7 @@ namespace EvilCar
                 else if(profile is Administrator)
                 {
                     var admin = (Administrator)profile;
+                    admin.Console();
                 }
             }
             else
@@ -52,10 +53,10 @@ namespace EvilCar
         // Hat find ich beides seine Vorteile und daseins berechtigungn......
         public static UserType Login()
         {
-            Console.WriteLine("Enter Username: ");
+            Console.Write("Enter Username: ");
             var username = Console.ReadLine();
 
-            Console.WriteLine("Enter Password: ");
+            Console.Write("Enter Password: ");
             var password = Console.ReadLine();
 
             XDocument xmlDoc = XDocument.Load("Profiles.xml");

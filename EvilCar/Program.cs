@@ -8,7 +8,8 @@ namespace EvilCar
     class Program
     {
 
-        enum UserTypes
+        // Gehört find ich auch eher mit in die UserType Klasse...
+        public enum UserRole
         {
             User, Manager, Admin
         }
@@ -17,10 +18,23 @@ namespace EvilCar
         // Müssten da eh schauen, wie wir das mit der Authetifizierung machen wollen.
         static void Main(string[] args)
         {
-            var user = Login();
-            if(user != null)
+            var profile = Login();
+            if(profile != null)
             {
-                Console.WriteLine($"Hello {user.Name}! You are now logged in.");
+                Console.WriteLine($"Hello {profile.Name}! You are now logged in.");
+
+                if(profile is User)
+                {
+                    var user = (User)profile;
+                }
+                else if(profile is FleetManager)
+                {
+                    var manager = (FleetManager)profile;
+                }
+                else if(profile is Administrator)
+                {
+                    var admin = (Administrator)profile;
+                }
             }
             else
             {
@@ -30,6 +44,12 @@ namespace EvilCar
             Console.Read();
         }
 
+        // Vielleicht mit in die UserType Klasse packen??
+        // Da könnte am Anfang ein (leeres)UserType Objekt erstellt werden.
+        // Im Konstruktor?? (oder extra Funktion aufrufen??) kann dann der Ablauf hier abgearbeitet werden.
+        // Die Klasse wird dann als UserType zurückgegeben
+        // Dadurch könnte auch UserRole mit in die UserType Klasse, nur gehören da eigentlich die XML und Base64 Operationen nicht rein...
+        // Hat find ich beides seine Vorteile und daseins berechtigungn......
         public static UserType Login()
         {
             Console.WriteLine("Enter Username: ");
@@ -45,11 +65,11 @@ namespace EvilCar
             {
                 if (Base64Decode(profile.Element("Password").Value).Equals(password))
                 {
-                    switch ((UserTypes)Enum.Parse(typeof(UserTypes), profile.Element("Role").Value))
+                    switch ((UserRole)Enum.Parse(typeof(UserRole), profile.Element("Role").Value))
                     {
-                        case UserTypes.User: return new User(username);
-                        case UserTypes.Manager: return new FleetManager(username);
-                        case UserTypes.Admin: return new Administrator(username);
+                        case UserRole.User: return new User(username);
+                        case UserRole.Manager: return new FleetManager(username);
+                        case UserRole.Admin: return new Administrator(username);
                     }
                 }
             }

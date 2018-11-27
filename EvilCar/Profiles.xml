@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Profiles>
+  <Profile>
+    <Name>Admin</Name>
+    <Password>QWRtaW4xMjM=</Password>
+  </Profile>
+  <Profile>
+    <Name>User1</Name>
+    <Password>QWRtaW4xMjM=</Password>
+  </Profile>
+  <Profile>
+    <Name>User2</Name>
+    <Password>QWRtaW4xMjM=</Password>
+  </Profile>
+</Profiles>

@@ -8,6 +8,8 @@ namespace EvilCar
 {
     class Car
     {
+        public float Costs { get; }
+
         // müssen die noch mit dem Preis verbinden.
         public enum BookableServices
         {

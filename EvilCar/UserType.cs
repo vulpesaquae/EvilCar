@@ -6,8 +6,13 @@ using System.Threading.Tasks;
 
 namespace EvilCar
 {
-    class Profile
+    class UserType
     {
+        public UserType(string name)
+        {
+            Name = name;
+        }
+
         public string Name { get; set; }
     }
 }

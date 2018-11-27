@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace EvilCar
 {
-    class Administrator : Profile
+    class Administrator : UserType
     {
+        public Administrator(string name) : base(name) {}
+
         public bool Admin_Create(string name, string password)
         {
             throw new NotImplementedException();

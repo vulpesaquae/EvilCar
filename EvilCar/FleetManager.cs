@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace EvilCar
 {
-    class FleetManager
+    class FleetManager : UserType
     {
+        public FleetManager(string name) : base(name)   {}
+
         public bool Customer_Create(string name, string password)
         {
             throw new NotImplementedException();

@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace EvilCar
 {
-    class User : Profile
+    class User : UserType
     {
+        public User(string name) : base(name) {}
+
         public Car RentedCar { get; private set; }
         public float Costs {
             get

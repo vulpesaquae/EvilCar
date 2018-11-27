@@ -3,13 +3,16 @@
   <Profile>
     <Name>Admin</Name>
     <Password>QWRtaW4xMjM=</Password>
+    <Role>Admin</Role>
   </Profile>
   <Profile>
-    <Name>User1</Name>
+    <Name>Manager</Name>
     <Password>QWRtaW4xMjM=</Password>
+    <Role>Manager</Role>
   </Profile>
   <Profile>
-    <Name>User2</Name>
+    <Name>User</Name>
     <Password>QWRtaW4xMjM=</Password>
+    <Role>User</Role>
   </Profile>
 </Profiles>

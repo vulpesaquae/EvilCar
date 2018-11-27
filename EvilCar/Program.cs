@@ -7,6 +7,12 @@ namespace EvilCar
 {
     class Program
     {
+
+        enum UserTypes
+        {
+            User, Manager, Admin
+        }
+
         // Laut Domain Model in der Projektbeschreibung (S. 6) hätte ich mir Administrator und FleetManager Klasse sparen können.
         // Müssten da eh schauen, wie wir das mit der Authetifizierung machen wollen.
         static void Main(string[] args)
@@ -14,7 +20,7 @@ namespace EvilCar
             var user = Login();
             if(user != null)
             {
-                Console.WriteLine("You are logged in.");
+                Console.WriteLine($"Hello {user.Name}! You are now logged in.");
             }
             else
             {
@@ -24,7 +30,7 @@ namespace EvilCar
             Console.Read();
         }
 
-        public static User Login()
+        public static UserType Login()
         {
             Console.WriteLine("Enter Username: ");
             var username = Console.ReadLine();
@@ -39,7 +45,12 @@ namespace EvilCar
             {
                 if (Base64Decode(profile.Element("Password").Value).Equals(password))
                 {
-                    return new User();
+                    switch ((UserTypes)Enum.Parse(typeof(UserTypes), profile.Element("Role").Value))
+                    {
+                        case UserTypes.User: return new User(username);
+                        case UserTypes.Manager: return new FleetManager(username);
+                        case UserTypes.Admin: return new Administrator(username);
+                    }
                 }
             }
 

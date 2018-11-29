@@ -43,8 +43,6 @@ namespace EvilCar
             {
                 Console.WriteLine("There was an error.");
             }
-
-            Console.Read();
         }
 
         // Vielleicht mit in die UserType Klasse packen??
@@ -55,11 +53,8 @@ namespace EvilCar
         // Hat find ich beides seine Vorteile und daseins berechtigungn......
         public static UserType Login()
         {
-            Console.Write("Enter Username: ");
-            var username = Console.ReadLine();
-
-            Console.Write("Enter Password: ");
-            var password = Console.ReadLine();
+            string username, password;
+            InsertCredentials(out username, out password);
 
             XDocument xmlDoc = XDocument.Load("Profiles.xml");
             var profile = xmlDoc.Descendants("Profile").SingleOrDefault(x => x.Element("Name").Value.Equals(username));
@@ -80,6 +75,15 @@ namespace EvilCar
             return null;
         }
 
+        // let the user insert the credentials for a profile
+        public static void InsertCredentials(out string username, out string password)
+        {
+            Console.Write("Username: ");
+            username = Console.ReadLine();
+
+            Console.Write("Password: ");
+            password = Console.ReadLine();
+        }
 
         public static string Base64Encode(string str)
         {

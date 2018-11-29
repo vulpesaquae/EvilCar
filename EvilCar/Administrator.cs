@@ -16,36 +16,35 @@ namespace EvilCar
             ConsoleKeyInfo inputKey;
             do
             {
-                Console.WriteLine("Please choose one of the options: ");
+                Console.WriteLine("\n\nPlease choose one of the options: ");
                 Console.WriteLine("\t<Q> Exit");
-                Console.WriteLine("\t<C> Create a new administrator");
+                Console.WriteLine($"\t<A> Create a new \"{UserRole.Admin.ToString()}\"");
+                Console.WriteLine($"\t<M> Create a new \"{UserRole.Manager.ToString()}\"");
 
                 inputKey = Console.ReadKey(false);
 
                 switch (inputKey.Key)
                 {
-                    case ConsoleKey.C: Admin_Create(); break;
+                    case ConsoleKey.A: Admin_Create(); break;
+                    case ConsoleKey.M: FleetManager_Create(); break;
                 }
             } while (inputKey.Key != ConsoleKey.Q);
         }
 
-        public bool Admin_Create()
+        public bool CreateAccount(UserRole role)
         {
-            Console.WriteLine("\n\nCreate a new administartor!");
+            Console.WriteLine($"\n\nCreate a new {role.ToString()}!");
 
-            Console.Write("Username: ");
-            var username = Console.ReadLine();
+            string username, password;
+            Program.InsertCredentials(out username, out password);
 
-            Console.Write("Password: ");
-            var password = Console.ReadLine();
-
-            Console.Write($"\nCreate new admin \"{username}\"? yes - <y>, no - <n>: ");
-            if(Console.ReadKey(false).Key == ConsoleKey.Y)
+            Console.Write($"\nCreate new {role.ToString()} \"{username}\"? yes - <y>, no - <n>: ");
+            if (Console.ReadKey(false).Key == ConsoleKey.Y)
             {
                 XDocument xmlDoc = XDocument.Load("Profiles.xml");
 
                 // check if name already exists
-                if(xmlDoc.Descendants("Profile").SingleOrDefault(x => x.Element("Name").Value.Equals(username)) == null)
+                if (xmlDoc.Descendants("Profile").SingleOrDefault(x => x.Element("Name").Value.Equals(username)) == null)
                 {
                     // create the node for the admin
                     var newNode = new XElement("Profile");
@@ -57,7 +56,7 @@ namespace EvilCar
                     xmlDoc.Element("Profiles").Add(newNode);
                     xmlDoc.Save("Profiles.xml");
 
-                    Console.WriteLine($"\nNew Admin {username} was created.");
+                    Console.WriteLine($"\nNew {role.ToString()} \"{username}\" was created.");
 
                     return true;
                 }
@@ -65,25 +64,24 @@ namespace EvilCar
                 {
                     Console.WriteLine("\nThe user already exists.");
                 }
-
             }
             else
             {
-                Console.WriteLine("\nCanceled to create new administrator.");
+                Console.WriteLine($"\nCanceled to create new {role.ToString()}.");
             }
 
             return false;
         }
+
+        // Create a new Admin
+        public bool Admin_Create() => CreateAccount(UserRole.Admin);
 
         public void Admin_Read(string name)
         {
             throw new NotImplementedException();
         }
 
-        public bool FleetManager_Create(string name, string password, string branch)
-        {
-            throw new NotImplementedException();
-        }
+        public bool FleetManager_Create() => CreateAccount(UserRole.Manager);
 
         // Delete fleet manager if there are more than one fleet manager for a branch
         public bool FleetManager_Delete(string name)

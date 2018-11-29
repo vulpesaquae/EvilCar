@@ -11,48 +11,68 @@ namespace EvilCar
     {
         public Administrator(string name) : base(name) {}
 
-        public void Console()
+        public void AdminConsole()
         {
-            System.Console.WriteLine("Please choose one of the options:");
-            System.Console.WriteLine("<1> Create a new administrator");
-
-            switch(System.Console.ReadKey().KeyChar)
+            ConsoleKeyInfo inputKey;
+            do
             {
-                case '1': Admin_Create(); break;
-            }
+                Console.WriteLine("Please choose one of the options: ");
+                Console.WriteLine("\t<Q> Exit");
+                Console.WriteLine("\t<C> Create a new administrator");
+
+                inputKey = Console.ReadKey(false);
+
+                switch (inputKey.Key)
+                {
+                    case ConsoleKey.C: Admin_Create(); break;
+                }
+            } while (inputKey.Key != ConsoleKey.Q);
         }
 
         public bool Admin_Create()
         {
-            System.Console.WriteLine("\n\nCreate a new administartor!");
+            Console.WriteLine("\n\nCreate a new administartor!");
 
-            System.Console.Write("Username: ");
-            var username = System.Console.ReadLine();
+            Console.Write("Username: ");
+            var username = Console.ReadLine();
 
-            System.Console.Write("Password: ");
-            var password = System.Console.ReadLine();
+            Console.Write("Password: ");
+            var password = Console.ReadLine();
 
-            System.Console.Write($"Create new admin \"{username}\"? yes - <y>, no - <n>: ");
-            if(System.Console.ReadKey().Key == ConsoleKey.Y)
+            Console.Write($"\nCreate new admin \"{username}\"? yes - <y>, no - <n>: ");
+            if(Console.ReadKey(false).Key == ConsoleKey.Y)
             {
                 XDocument xmlDoc = XDocument.Load("Profiles.xml");
 
+                // check if name already exists
                 if(xmlDoc.Descendants("Profile").SingleOrDefault(x => x.Element("Name").Value.Equals(username)) == null)
                 {
-                    System.Console.WriteLine("\nWurde noch nicht erstellt. Muss mir erstmal noch XmlReader und XmlWriter anschauen. Da kann man wohl auch schon direkt mit Base64 arbeite. Würden wir die extra funktionen nicht benötigen und das Login könnte auch in die UserType Klasse.");
+                    // create the node for the admin
+                    var newNode = new XElement("Profile");
+                    newNode.Add(new XElement("Name", username));
+                    newNode.Add(new XElement("Password", Program.Base64Encode(password)));
+                    newNode.Add(new XElement("Role", UserRole.Admin.ToString()));
+
+                    // add the node to the main node
+                    xmlDoc.Element("Profiles").Add(newNode);
+                    xmlDoc.Save("Profiles.xml");
+
+                    Console.WriteLine($"\nNew Admin {username} was created.");
+
+                    return true;
                 }
                 else
                 {
-                    System.Console.WriteLine("\nThe user already exists.");
+                    Console.WriteLine("\nThe user already exists.");
                 }
 
             }
             else
             {
-                System.Console.WriteLine("\nCanceled to create new administrator.");
+                Console.WriteLine("\nCanceled to create new administrator.");
             }
 
-            throw new NotImplementedException();
+            return false;
         }
 
         public void Admin_Read(string name)

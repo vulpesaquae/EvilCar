@@ -1,19 +1,21 @@
 ﻿using System;
 using System.Linq;
 using System.Text;
+using System.Xml;
 using System.Xml.Linq;
 
 namespace EvilCar
 {
+    // Gehört find ich auch eher mit in die UserType Klasse...
+
+    // Wird auch in anderen Klassen benötigt...dann vielleicht doch hier??
+    public enum UserRole
+    {
+        User, Manager, Admin
+    }
+
     class Program
     {
-
-        // Gehört find ich auch eher mit in die UserType Klasse...
-        public enum UserRole
-        {
-            User, Manager, Admin
-        }
-
         // Laut Domain Model in der Projektbeschreibung (S. 6) hätte ich mir Administrator und FleetManager Klasse sparen können.
         // Müssten da eh schauen, wie wir das mit der Authetifizierung machen wollen.
         static void Main(string[] args)
@@ -34,7 +36,7 @@ namespace EvilCar
                 else if(profile is Administrator)
                 {
                     var admin = (Administrator)profile;
-                    admin.Console();
+                    admin.AdminConsole();
                 }
             }
             else

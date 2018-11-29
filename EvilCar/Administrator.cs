@@ -45,7 +45,7 @@ namespace EvilCar
         }
 
         // Create a account with a specified user role
-        public bool CreateAccount(UserRole role)
+        public void CreateAccount(UserRole role)
         {
             Console.WriteLine($"\n\nCreate a new {role.ToString()}!");
 
@@ -71,8 +71,6 @@ namespace EvilCar
                     xmlDoc.Save("Profiles.xml");
 
                     Console.WriteLine($"\nNew {role.ToString()} \"{username}\" was created.");
-
-                    return true;
                 }
                 else
                 {
@@ -83,12 +81,10 @@ namespace EvilCar
             {
                 Console.WriteLine($"\nCanceled to create new {role.ToString()}.");
             }
-
-            return false;
         }
 
         // Create a new Admin
-        public bool Admin_Create() => CreateAccount(UserRole.Admin);
+        public void Admin_Create() => CreateAccount(UserRole.Admin);
 
         // Read an admin
         public void Admin_Read()
@@ -103,17 +99,17 @@ namespace EvilCar
         }
 
         // Create a new Fleet Manager
-        public bool FleetManager_Create() => CreateAccount(UserRole.Manager);
+        public void FleetManager_Create() => CreateAccount(UserRole.Manager);
 
         // Delete fleet manager if there are more than one fleet manager for a branch
-        public bool FleetManager_Delete()
+        public void FleetManager_Delete()
         {
             throw new NotImplementedException();
         }
 
         // An asynchronous e-mail with the new password will be sent
         // E-mail will be mocked by an asynchronous Console.WriteLine task that lasts about 5-10 seconds
-        public bool FleetManager_UpdatePassword()
+        public void FleetManager_UpdatePassword()
         {
             throw new NotImplementedException();
         }
@@ -128,7 +124,7 @@ namespace EvilCar
             throw new NotImplementedException();
         }
 
-        public bool Branch_Create()
+        public void Branch_Create()
         {
             throw new NotImplementedException();
         }

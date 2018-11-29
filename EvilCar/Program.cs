@@ -51,13 +51,21 @@ namespace EvilCar
         // Die Klasse wird dann als UserType zurückgegeben
         // Dadurch könnte auch UserRole mit in die UserType Klasse, nur gehören da eigentlich die XML und Base64 Operationen nicht rein...
         // Hat find ich beides seine Vorteile und daseins berechtigungn......
+        /// <summary>
+        /// Login for the user into his profile
+        /// </summary>
+        /// <returns>Specific UserType class for the role of the authorized user</returns>
         public static UserType Login()
         {
             string username, password;
             InsertCredentials(out username, out password);
 
             XDocument xmlDoc = XDocument.Load("Profiles.xml");
-            var profile = xmlDoc.Descendants("Profile").SingleOrDefault(x => x.Element("Name").Value.Equals(username));
+            // get the profile with the same value than "username"
+            // both values are compared with lower case letters
+            var profile = xmlDoc.Descendants("Profile")
+                .SingleOrDefault(x => x.Element("Name").Value.ToLower()
+                .Equals(username.ToLower()));
 
             if (profile != null)
             {
@@ -75,7 +83,11 @@ namespace EvilCar
             return null;
         }
 
-        // let the user insert the credentials for a profile
+        /// <summary>
+        /// Let the user insert the credentials for a profile
+        /// </summary>
+        /// <param name="username">Name for the profile to work with</param>
+        /// <param name="password">Password for the profile to work with</param>
         public static void InsertCredentials(out string username, out string password)
         {
             Console.Write("Username: ");
@@ -85,6 +97,11 @@ namespace EvilCar
             password = Console.ReadLine();
         }
 
+        /// <summary>
+        /// Convert plain text to base64
+        /// </summary>
+        /// <param name="str">Text to convert to Base64</param>
+        /// <returns></returns>
         public static string Base64Encode(string str)
         {
             if(str.Length > 0)
@@ -98,6 +115,11 @@ namespace EvilCar
             }
         }
 
+        /// <summary>
+        /// Convert base64 to plain text
+        /// </summary>
+        /// <param name="str">Text to convert to plain text</param>
+        /// <returns></returns>
         public static string Base64Decode(string str)
         {
             if(str.Length > 0)

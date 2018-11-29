@@ -12,6 +12,10 @@ namespace EvilCar
     {
         public Admin(string name) : base(name) {}
 
+        /// <summary>
+        /// Print all options to the user
+        /// Start the choosen function
+        /// </summary>
         public void AdminConsole()
         {
             ConsoleKeyInfo inputKey;
@@ -47,9 +51,12 @@ namespace EvilCar
                     case ConsoleKey.B: Branch_Create(); break;
                 }
             } while (inputKey.Key != ConsoleKey.Q);
+
+            
         }
 
-        // Create a account with a specified user role
+        // Create a profile with a specified user role
+        // List the names of this profiles
         private void Profile_Create(UserRole role)
         {
             Console.WriteLine($"\n\nCreate a new {role.ToString()}!");
@@ -88,6 +95,7 @@ namespace EvilCar
             }
         }
 
+        // Read a profile with a specified user role
         private void Profile_Read(UserRole role)
         {
             var xmldoc = XDocument.Load("Profiles.xml");
@@ -101,37 +109,36 @@ namespace EvilCar
             }
         }
 
-        // Create a new Admin
-        public void Admin_Create() => Profile_Create(UserRole.Admin);
+        // Create a new admin
+        private void Admin_Create() => Profile_Create(UserRole.Admin);
 
         // Read the admin
-        // Display the names of all admins
-        public void Admin_Read() => Profile_Read(UserRole.Admin);
+        private void Admin_Read() => Profile_Read(UserRole.Admin);
 
-        // Create a new Fleet Manager
-        public void FleetManager_Create() => Profile_Create(UserRole.Manager);
+        // Create a new manager
+        private void FleetManager_Create() => Profile_Create(UserRole.Manager);
 
-        // Delete fleet manager if there are more than one fleet manager for a branch
-        public void FleetManager_Delete()
+        // Delete fleet manager only, if there are more than one fleet manager for a branch
+        private void FleetManager_Delete()
         {
             throw new NotImplementedException();
         }
 
-        public void FleetManager_Read() => Profile_Read(UserRole.Manager);
+        private void FleetManager_Read() => Profile_Read(UserRole.Manager);
 
         // An asynchronous e-mail with the new password will be sent
         // E-mail will be mocked by an asynchronous Console.WriteLine task that lasts about 5-10 seconds
-        public void FleetManager_UpdatePassword()
+        private void FleetManager_UpdatePassword()
         {
             throw new NotImplementedException();
         }
 
-        public void UpdateProfile()
+        private void UpdateProfile()
         {
             throw new NotImplementedException();
         }
 
-        public void Branch_Create()
+        private void Branch_Create()
         {
             throw new NotImplementedException();
         }

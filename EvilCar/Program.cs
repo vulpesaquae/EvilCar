@@ -33,9 +33,9 @@ namespace EvilCar
                 {
                     var manager = (FleetManager)profile;
                 }
-                else if(profile is Administrator)
+                else if(profile is Admin)
                 {
-                    var admin = (Administrator)profile;
+                    var admin = (Admin)profile;
                     admin.AdminConsole();
                 }
             }
@@ -67,7 +67,7 @@ namespace EvilCar
                     {
                         case UserRole.User: return new User(username);
                         case UserRole.Manager: return new FleetManager(username);
-                        case UserRole.Admin: return new Administrator(username);
+                        case UserRole.Admin: return new Admin(username);
                     }
                 }
             }

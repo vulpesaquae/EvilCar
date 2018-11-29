@@ -8,16 +8,21 @@ using System.Xml.Linq;
 
 namespace EvilCar
 {
-    class Administrator : UserType
+    class Admin : UserType
     {
-        public Administrator(string name) : base(name) {}
+        public Admin(string name) : base(name) {}
 
         public void AdminConsole()
         {
             ConsoleKeyInfo inputKey;
             do
             {
-                Console.WriteLine("\n\nPlease choose one of the options: ");
+                // Bin noch am überlegen ob es nicht besser ist, einfach von A-Z bei der Nummerierung zu gehen
+                // Hab versucht dem soweit eine gewisse Logik zu geben, funktioniert aber nicht überall
+                // Bei Zahlen haben wir nur 10 Möglichkeiten, ansonsten muss die eingabe noch geparsed, sollten also bei Buchstaben bleiben
+                // Andererseits könnte man das auch über Commands machen
+                    // also "createadmin", "readadmin" usw. um die Funktionen aufzurufen
+                Console.WriteLine("\nPlease choose one of the options: ");
                 Console.WriteLine("\t<Q> Exit");
                 Console.WriteLine($"\t<A> Create a new \"{UserRole.Admin.ToString()}\"");
                 Console.WriteLine($"\t<R> Read a \"{UserRole.Admin.ToString()}\"");
@@ -45,7 +50,7 @@ namespace EvilCar
         }
 
         // Create a account with a specified user role
-        public void CreateAccount(UserRole role)
+        private void Profile_Create(UserRole role)
         {
             Console.WriteLine($"\n\nCreate a new {role.ToString()}!");
 
@@ -83,23 +88,28 @@ namespace EvilCar
             }
         }
 
-        // Create a new Admin
-        public void Admin_Create() => CreateAccount(UserRole.Admin);
-
-        // Read an admin
-        public void Admin_Read()
+        private void Profile_Read(UserRole role)
         {
-            using (var reader = XmlReader.Create("Profiles.xml"))
+            var xmldoc = XDocument.Load("Profiles.xml");
+            var profiles = xmldoc.Descendants("Profile");
+
+            Console.WriteLine($"\nThese are the current {role.ToString()}'s:");
+
+            foreach (var profile in profiles.Where(x => x.Element("Role").Value.Equals(role.ToString())))
             {
-                while(reader.Read())
-                {
-                    Console.WriteLine(reader.Name);
-                }
+                Console.WriteLine($"\t{profile.Element("Name").Value}");
             }
         }
 
+        // Create a new Admin
+        public void Admin_Create() => Profile_Create(UserRole.Admin);
+
+        // Read the admin
+        // Display the names of all admins
+        public void Admin_Read() => Profile_Read(UserRole.Admin);
+
         // Create a new Fleet Manager
-        public void FleetManager_Create() => CreateAccount(UserRole.Manager);
+        public void FleetManager_Create() => Profile_Create(UserRole.Manager);
 
         // Delete fleet manager if there are more than one fleet manager for a branch
         public void FleetManager_Delete()
@@ -107,14 +117,11 @@ namespace EvilCar
             throw new NotImplementedException();
         }
 
+        public void FleetManager_Read() => Profile_Read(UserRole.Manager);
+
         // An asynchronous e-mail with the new password will be sent
         // E-mail will be mocked by an asynchronous Console.WriteLine task that lasts about 5-10 seconds
         public void FleetManager_UpdatePassword()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void FleetManager_Read()
         {
             throw new NotImplementedException();
         }

@@ -20,28 +20,34 @@ namespace EvilCar
         // Müssten da eh schauen, wie wir das mit der Authetifizierung machen wollen.
         static void Main(string[] args)
         {
-            var profile = Login();
-            if(profile != null)
+            while (true)
             {
-                Console.WriteLine($"Hello {profile.Name}! You are now logged in.");
+                Console.WriteLine("Please enter your credentials for the login.");
+                Console.WriteLine("Press CTRL + C to extit.");
 
-                if(profile is User)
+                var profile = Login();
+                if (profile != null)
                 {
-                    var user = (User)profile;
+                    Console.WriteLine($"Hello {profile.Name}! You are now logged in.");
+
+                    if (profile is User)
+                    {
+                        var user = (User)profile;
+                    }
+                    else if (profile is Manager)
+                    {
+                        var manager = (Manager)profile;
+                    }
+                    else if (profile is Admin)
+                    {
+                        var admin = (Admin)profile;
+                        admin.AdminConsole();
+                    }
                 }
-                else if(profile is Manager)
+                else
                 {
-                    var manager = (Manager)profile;
+                    Console.WriteLine("There was an error with your credentials. Please try again.\n");
                 }
-                else if(profile is Admin)
-                {
-                    var admin = (Admin)profile;
-                    admin.AdminConsole();
-                }
-            }
-            else
-            {
-                Console.WriteLine("There was an error.");
             }
         }
 
@@ -61,6 +67,7 @@ namespace EvilCar
             InsertCredentials(out username, out password);
 
             XDocument xmlDoc = XDocument.Load("Profiles.xml");
+
             // get the profile with the same value than "username"
             // both values are compared with lower case letters
             var profile = xmlDoc.Descendants("Profile")

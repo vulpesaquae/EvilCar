@@ -27,7 +27,7 @@ namespace EvilCar
                 // Andererseits könnte man das auch über Commands machen
                     // also "createadmin", "readadmin" usw. um die Funktionen aufzurufen
                 Console.WriteLine("\nPlease choose one of the options: ");
-                Console.WriteLine("\t<Q> Exit");
+                Console.WriteLine("\t<Q> Go back to login screen");
                 Console.WriteLine($"\t<A> Create a new \"{UserRole.Admin.ToString()}\"");
                 Console.WriteLine($"\t<R> Read a \"{UserRole.Admin.ToString()}\"");
                 Console.WriteLine($"\t<M> Create a new \"{UserRole.Manager.ToString()}\"");
@@ -52,7 +52,7 @@ namespace EvilCar
                 }
             } while (inputKey.Key != ConsoleKey.Q);
 
-            
+
         }
 
         // Create a profile with a specified user role

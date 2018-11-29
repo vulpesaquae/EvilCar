@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 using System.Xml.Linq;
 
 namespace EvilCar
@@ -19,18 +20,31 @@ namespace EvilCar
                 Console.WriteLine("\n\nPlease choose one of the options: ");
                 Console.WriteLine("\t<Q> Exit");
                 Console.WriteLine($"\t<A> Create a new \"{UserRole.Admin.ToString()}\"");
+                Console.WriteLine($"\t<R> Read a \"{UserRole.Admin.ToString()}\"");
                 Console.WriteLine($"\t<M> Create a new \"{UserRole.Manager.ToString()}\"");
+                Console.WriteLine($"\t<L> Read a \"{UserRole.Manager.ToString()}\"");
+                Console.WriteLine($"\t<D> Delete a \"{UserRole.Manager.ToString()}\"");
+                Console.WriteLine($"\t<F> Update the password of a \"{UserRole.Manager.ToString()}\"");
+                Console.WriteLine($"\t<U> Update your profile");
+                Console.WriteLine($"\t<B> Create a new Branch");
 
                 inputKey = Console.ReadKey(false);
 
                 switch (inputKey.Key)
                 {
                     case ConsoleKey.A: Admin_Create(); break;
+                    case ConsoleKey.R: Admin_Read(); break;
                     case ConsoleKey.M: FleetManager_Create(); break;
+                    case ConsoleKey.L: FleetManager_Read(); break;
+                    case ConsoleKey.D: FleetManager_Delete(); break;
+                    case ConsoleKey.F: FleetManager_UpdatePassword(); break;
+                    case ConsoleKey.U: UpdateProfile(); break;
+                    case ConsoleKey.B: Branch_Create(); break;
                 }
             } while (inputKey.Key != ConsoleKey.Q);
         }
 
+        // Create a account with a specified user role
         public bool CreateAccount(UserRole role)
         {
             Console.WriteLine($"\n\nCreate a new {role.ToString()}!");
@@ -76,27 +90,35 @@ namespace EvilCar
         // Create a new Admin
         public bool Admin_Create() => CreateAccount(UserRole.Admin);
 
-        public void Admin_Read(string name)
+        // Read an admin
+        public void Admin_Read()
         {
-            throw new NotImplementedException();
+            using (var reader = XmlReader.Create("Profiles.xml"))
+            {
+                while(reader.Read())
+                {
+                    Console.WriteLine(reader.Name);
+                }
+            }
         }
 
+        // Create a new Fleet Manager
         public bool FleetManager_Create() => CreateAccount(UserRole.Manager);
 
         // Delete fleet manager if there are more than one fleet manager for a branch
-        public bool FleetManager_Delete(string name)
+        public bool FleetManager_Delete()
         {
             throw new NotImplementedException();
         }
 
         // An asynchronous e-mail with the new password will be sent
         // E-mail will be mocked by an asynchronous Console.WriteLine task that lasts about 5-10 seconds
-        public bool FleetManager_UpdatePassword(string name, string password)
+        public bool FleetManager_UpdatePassword()
         {
             throw new NotImplementedException();
         }
 
-        public void FleetManager_Read(string name)
+        public void FleetManager_Read()
         {
             throw new NotImplementedException();
         }
@@ -106,7 +128,7 @@ namespace EvilCar
             throw new NotImplementedException();
         }
 
-        public bool Branch_Create(string name)
+        public bool Branch_Create()
         {
             throw new NotImplementedException();
         }

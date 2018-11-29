@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace EvilCar
 {
-    class FleetManager : UserType
+    class Manager : UserType
     {
-        public FleetManager(string name) : base(name)   {}
+        public Manager(string name) : base(name)   {}
 
         public bool Customer_Create(string name, string password)
         {

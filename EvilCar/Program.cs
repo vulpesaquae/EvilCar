@@ -29,9 +29,9 @@ namespace EvilCar
                 {
                     var user = (User)profile;
                 }
-                else if(profile is FleetManager)
+                else if(profile is Manager)
                 {
-                    var manager = (FleetManager)profile;
+                    var manager = (Manager)profile;
                 }
                 else if(profile is Admin)
                 {
@@ -74,7 +74,7 @@ namespace EvilCar
                     switch ((UserRole)Enum.Parse(typeof(UserRole), profile.Element("Role").Value))
                     {
                         case UserRole.User: return new User(username);
-                        case UserRole.Manager: return new FleetManager(username);
+                        case UserRole.Manager: return new Manager(username);
                         case UserRole.Admin: return new Admin(username);
                     }
                 }

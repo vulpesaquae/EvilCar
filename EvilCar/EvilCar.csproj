@@ -47,7 +47,7 @@
     <Compile Include="Branch.cs" />
     <Compile Include="Car.cs" />
     <Compile Include="Fleet.cs" />
-    <Compile Include="FleetManager.cs" />
+    <Compile Include="Manager.cs" />
     <Compile Include="UserType.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

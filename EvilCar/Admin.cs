@@ -51,8 +51,6 @@ namespace EvilCar
                     case ConsoleKey.B: Branch_Create(); break;
                 }
             } while (inputKey.Key != ConsoleKey.Q);
-
-
         }
 
         #region Profile
@@ -108,6 +106,40 @@ namespace EvilCar
             foreach (var profile in profiles.Where(x => x.Element("Role").Value.Equals(role.ToString())))
             {
                 Console.WriteLine($"\t{profile.Element("Name").Value}");
+            }
+        }
+
+        private void Profile_Update(string username)
+        {
+            var xmlDoc = XDocument.Load(Program.PROFILES_FILENAME);
+            var profile = Program.ProfilesXml_GetUser(xmlDoc, username);
+
+            if(profile != null)
+            {
+                Console.Write("\nOld password: ");
+                if(Program.Base64Decode(profile.Element("Password").Value).Equals(Console.ReadLine()))
+                {
+                    Console.Write("New password: ");
+                    var newPassword = Console.ReadLine();
+
+                    Console.Write("Repeat: ");
+                    if(Console.ReadLine().Equals(newPassword))
+                    {
+                        profile.Element("Password").Value = Program.Base64Encode(newPassword);
+
+                        xmlDoc.Save(Program.PROFILES_FILENAME);
+
+                        Console.WriteLine($"\nThe password of {username} changed");
+                    }
+                    else
+                    {
+                        Console.WriteLine("\nYour passwords are not equal.");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("\nYour password was wrong.");
+                }
             }
         }
 
@@ -175,7 +207,8 @@ namespace EvilCar
         // E-mail will be mocked by an asynchronous Console.WriteLine task that lasts about 5-10 seconds
         private void FleetManager_UpdatePassword()
         {
-            throw new NotImplementedException();
+            Console.Write("\nUsername: ");
+            Profile_Update(Console.ReadLine());
         }
 
         #endregion FleetManager
@@ -184,7 +217,7 @@ namespace EvilCar
 
         private void UpdateProfile()
         {
-            throw new NotImplementedException();
+            Profile_Update(this.Name);
         }
 
         private void Branch_Create()

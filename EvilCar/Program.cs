@@ -16,6 +16,8 @@ namespace EvilCar
 
     class Program
     {
+        public const string PROFILES_FILENAME = "Profiles.xml";
+
         // Laut Domain Model in der Projektbeschreibung (S. 6) hätte ich mir Administrator und FleetManager Klasse sparen können.
         // Müssten da eh schauen, wie wir das mit der Authetifizierung machen wollen.
         static void Main(string[] args)
@@ -66,13 +68,8 @@ namespace EvilCar
             string username, password;
             InsertCredentials(out username, out password);
 
-            XDocument xmlDoc = XDocument.Load("Profiles.xml");
-
-            // get the profile with the same value than "username"
-            // both values are compared with lower case letters
-            var profile = xmlDoc.Descendants("Profile")
-                .SingleOrDefault(x => x.Element("Name").Value.ToLower()
-                .Equals(username.ToLower()));
+            var xmlDoc = XDocument.Load(PROFILES_FILENAME);
+            var profile = ProfilesXml_GetUser(xmlDoc, username);
 
             if (profile != null)
             {
@@ -89,6 +86,13 @@ namespace EvilCar
 
             return null;
         }
+
+        /// <summary>
+        /// Get a XML Profile for a specified username from the file PROFILES_FILENAME
+        /// </summary>
+        /// <param name="username">Name to identifi the profile</param>
+        /// <returns></returns>
+        public static XElement ProfilesXml_GetUser(XDocument xmlDoc, string username) => xmlDoc.Descendants("Profile").SingleOrDefault(x => x.Element("Name").Value.ToLower().Equals(username.ToLower()));
 
         /// <summary>
         /// Let the user insert the credentials for a profile

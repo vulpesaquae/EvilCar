@@ -28,12 +28,12 @@ namespace EvilCar
                     // also "createadmin", "readadmin" usw. um die Funktionen aufzurufen
                 Console.WriteLine("\nPlease choose one of the options: ");
                 Console.WriteLine("\t<Q> Go back to login screen");
-                Console.WriteLine($"\t<A> Create a new \"{UserRole.Admin.ToString()}\"");
-                Console.WriteLine($"\t<R> Read a \"{UserRole.Admin.ToString()}\"");
-                Console.WriteLine($"\t<M> Create a new \"{UserRole.Manager.ToString()}\"");
-                Console.WriteLine($"\t<L> Read a \"{UserRole.Manager.ToString()}\"");
-                Console.WriteLine($"\t<D> Delete a \"{UserRole.Manager.ToString()}\"");
-                Console.WriteLine($"\t<F> Update the password of a \"{UserRole.Manager.ToString()}\"");
+                Console.WriteLine($"\t<A> Create a new \"{UserRole.Admin}\"");
+                Console.WriteLine($"\t<R> Read a \"{UserRole.Admin}\"");
+                Console.WriteLine($"\t<M> Create a new \"{UserRole.Manager}\"");
+                Console.WriteLine($"\t<L> Read a \"{UserRole.Manager}\"");
+                Console.WriteLine($"\t<D> Delete a \"{UserRole.Manager}\"");
+                Console.WriteLine($"\t<F> Update the password of a \"{UserRole.Manager}\"");
                 Console.WriteLine($"\t<U> Update your profile");
                 Console.WriteLine($"\t<B> Create a new Branch");
 
@@ -59,15 +59,15 @@ namespace EvilCar
         // List the names of this profiles
         private void Profile_Create(UserRole role)
         {
-            Console.WriteLine($"\n\nCreate a new {role.ToString()}!");
+            Console.WriteLine($"\n\nCreate a new {role}!");
 
             string username, password;
             Program.InsertCredentials(out username, out password);
 
-            Console.Write($"\nCreate new {role.ToString()} \"{username}\"? yes - <y>, no - <n>: ");
+            Console.Write($"\nCreate new {role} \"{username}\"? yes - <y>, no - <n>: ");
             if (Console.ReadKey(false).Key == ConsoleKey.Y)
             {
-                XDocument xmlDoc = XDocument.Load("Profiles.xml");
+                XDocument xmlDoc = XDocument.Load(Program.PROFILES_FILENAME);
 
                 // check if name already exists
                 if (xmlDoc.Descendants("Profile").SingleOrDefault(x => x.Element("Name").Value.Equals(username)) == null)
@@ -76,13 +76,13 @@ namespace EvilCar
                     var newNode = new XElement("Profile");
                     newNode.Add(new XElement("Name", username));
                     newNode.Add(new XElement("Password", Program.Base64Encode(password)));
-                    newNode.Add(new XElement("Role", UserRole.Admin.ToString()));
+                    newNode.Add(new XElement("Role", role));
 
                     // add the node to the main node
                     xmlDoc.Element("Profiles").Add(newNode);
-                    xmlDoc.Save("Profiles.xml");
+                    xmlDoc.Save(Program.PROFILES_FILENAME);
 
-                    Console.WriteLine($"\nNew {role.ToString()} \"{username}\" was created.");
+                    Console.WriteLine($"\nNew {role} \"{username}\" was created.");
                 }
                 else
                 {
@@ -91,14 +91,14 @@ namespace EvilCar
             }
             else
             {
-                Console.WriteLine($"\nCanceled to create new {role.ToString()}.");
+                Console.WriteLine($"\nCanceled to create new {role}.");
             }
         }
 
         // Read a profile with a specified user role
         private void Profile_Read(UserRole role)
         {
-            var xmldoc = XDocument.Load("Profiles.xml");
+            var xmldoc = XDocument.Load(Program.PROFILES_FILENAME);
             var profiles = xmldoc.Descendants("Profile");
 
             Console.WriteLine($"\nThese are the current {role.ToString()}'s:");
@@ -121,7 +121,42 @@ namespace EvilCar
         // Delete fleet manager only, if there are more than one fleet manager for a branch
         private void FleetManager_Delete()
         {
-            throw new NotImplementedException();
+            var xmlDoc = XDocument.Load(Program.PROFILES_FILENAME);
+
+            if (xmlDoc.Descendants("Role").Count(x => x.Value.Equals(UserRole.Manager.ToString())) > 1)
+            {
+                Console.WriteLine($"\nWhich {UserRole.Manager} do you want to delete?");
+                FleetManager_Read();
+
+                Console.Write("Username: ");
+                var username = Console.ReadLine();
+
+                var profile = Program.ProfilesXml_GetUser(xmlDoc, username);
+                if (profile != null)
+                {
+                    Console.WriteLine($"Are you sure you want to delete \"{username}\" as {UserRole.Manager}? <y> - yes, <n> - no: ");
+
+                    if (Console.ReadKey(false).Key == ConsoleKey.Y)
+                    {
+                        profile.Remove();
+                        xmlDoc.Save(Program.PROFILES_FILENAME);
+
+                        Console.WriteLine($"\nDeleted \"{username}\"");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Canceled to delete \"{username}\"");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine($"\nCannot find the {UserRole.Manager} \"{username}\"");
+                }
+            }
+            else
+            {
+                Console.WriteLine($"\nThere is only one {UserRole.Manager}.");
+            }
         }
 
         private void FleetManager_Read() => Profile_Read(UserRole.Manager);

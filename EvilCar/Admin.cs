@@ -55,6 +55,8 @@ namespace EvilCar
 
         }
 
+        #region Profile
+
         // Create a profile with a specified user role
         // List the names of this profiles
         private void Profile_Create(UserRole role)
@@ -109,11 +111,19 @@ namespace EvilCar
             }
         }
 
+        #endregion Profile
+
+        #region Admin
+
         // Create a new admin
         private void Admin_Create() => Profile_Create(UserRole.Admin);
 
         // Read the admin
         private void Admin_Read() => Profile_Read(UserRole.Admin);
+
+        #endregion Admin
+
+        #region FleeManager
 
         // Create a new manager
         private void FleetManager_Create() => Profile_Create(UserRole.Manager);
@@ -168,6 +178,10 @@ namespace EvilCar
             throw new NotImplementedException();
         }
 
+        #endregion FleetManager
+
+        #region other
+
         private void UpdateProfile()
         {
             throw new NotImplementedException();
@@ -177,5 +191,7 @@ namespace EvilCar
         {
             throw new NotImplementedException();
         }
+
+        #endregion other
     }
 }

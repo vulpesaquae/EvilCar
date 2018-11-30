@@ -53,6 +53,8 @@ namespace EvilCar
             }
         }
 
+        #region Static functions
+
         // Vielleicht mit in die UserType Klasse packen??
         // Da könnte am Anfang ein (leeres)UserType Objekt erstellt werden.
         // Im Konstruktor?? (oder extra Funktion aufrufen??) kann dann der Ablauf hier abgearbeitet werden.
@@ -108,6 +110,8 @@ namespace EvilCar
             password = Console.ReadLine();
         }
 
+        #region Base64
+
         /// <summary>
         /// Convert plain text to base64
         /// </summary>
@@ -143,5 +147,9 @@ namespace EvilCar
                 return "";
             }
         }
+
+        #endregion Base64
+
+        #endregion Static functions
     }
 }

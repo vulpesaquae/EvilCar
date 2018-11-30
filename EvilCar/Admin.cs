@@ -61,6 +61,8 @@ namespace EvilCar
         {
             Console.WriteLine($"\n\nCreate a new {role}!");
 
+            // für das passwort könnten wir auch eine zufällige zeichenfolge generieren lassen
+            // halt nur die frage ob das nötig ist...
             string username, password;
             Program.InsertCredentials(out username, out password);
 
@@ -116,6 +118,12 @@ namespace EvilCar
 
             if(profile != null)
             {
+                // die abgfrage nach dem alten passwort macht hier eher wenig sinn
+                // warum sollte der admin das password vom manager wissen??
+                // müsste ich eigentlich in der funktion für den eigenen account implementieren, müsste ich aber auch das profil erst nochmal auslesen
+                    // find ich nicht so gut gelöst
+                    // könnten auch das passwort von dem admin verlangen, kommt aber aufs gleiche hinaus
+                // müssen mal schauen, ob wir ne bessere umsetzung finden
                 Console.Write("\nOld password: ");
                 if(Program.Base64Decode(profile.Element("Password").Value).Equals(Console.ReadLine()))
                 {
@@ -130,6 +138,7 @@ namespace EvilCar
                         xmlDoc.Save(Program.PROFILES_FILENAME);
 
                         Console.WriteLine($"\nThe password of {username} changed");
+                        SendMailAsync(username, newPassword);
                     }
                     else
                     {
@@ -141,6 +150,14 @@ namespace EvilCar
                     Console.WriteLine("\nYour password was wrong.");
                 }
             }
+        }
+
+        private async Task SendMailAsync(string username, string newPassword)
+        {
+            await Task.Delay(5000);
+            Console.WriteLine("\n***\n"
+                + $"Hello {username}. Your password was changed and is now \"{newPassword}\"!"
+                + "\n***\n");
         }
 
         #endregion Profile

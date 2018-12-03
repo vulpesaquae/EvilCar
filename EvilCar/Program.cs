@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Entities;
+using System;
 using System.Linq;
 using System.Text;
 using System.Xml;
@@ -6,13 +7,6 @@ using System.Xml.Linq;
 
 namespace EvilCar
 {
-    // Gehört find ich auch eher mit in die UserType Klasse...
-
-    // Wird auch in anderen Klassen benötigt...dann vielleicht doch hier??
-    public enum UserRole
-    {
-        User, Manager, Admin
-    }
 
     class Program
     {

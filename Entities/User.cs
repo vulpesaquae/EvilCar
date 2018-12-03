@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace EvilCar
 {
-    class User : UserType
+    public class User : UserType
     {
         public User(string name) : base(name) {}
 

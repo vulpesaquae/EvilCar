@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +9,7 @@ using System.Xml.Linq;
 
 namespace EvilCar
 {
-    class Admin : UserType
+    public class Admin : UserType
     {
         public Admin(string name) : base(name) {}
 

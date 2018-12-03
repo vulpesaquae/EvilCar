@@ -7,7 +7,7 @@ using System.Xml.Linq;
 
 namespace EvilCar
 {
-    class UserType
+    public class UserType
     {
 
         public UserType(string name)

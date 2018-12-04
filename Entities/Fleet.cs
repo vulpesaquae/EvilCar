@@ -6,8 +6,18 @@ using System.Threading.Tasks;
 
 namespace EvilCar
 {
-    class Fleet
+    public class Fleet
     {
-        List<Car> AvailableCars = new List<Car>();
+        User fleet_manager;
+        List<Car> cars = new List<Car>();
+        string name;
+
+        public Fleet(User manager, string name)
+        {
+            fleet_manager = manager;
+            this.name = name;
+        }
+
+        public void add(Car car) => cars.Add(car);
     }
 }

@@ -6,11 +6,19 @@ using System.Threading.Tasks;
 
 namespace EvilCar
 {
-    public class User : UserType
+    public class User
     {
-        public User(string name) : base(name) {}
+        public string password;
+        public string name;
+        public Entities.UserRole role = Entities.UserRole.User;
+
+        public User(string name, string password) {
+            this.name = name;
+            this.password = password;
+        }
 
         public Car RentedCar { get; private set; }
+
         public float Costs {
             get
             {
@@ -24,6 +32,7 @@ namespace EvilCar
             }
         }
         public DateTime RentedSince { get; private set; }
+
         public List<Car.BookableServices> BookedServices { get; } = new List<Car.BookableServices>();
     }
 }

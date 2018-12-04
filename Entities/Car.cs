@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace EvilCar
 {
-    class Car
+    public class Car
     {
         public float Costs { get; }
 

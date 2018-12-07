@@ -10,11 +10,12 @@ namespace EvilCar
     {
         public string password;
         public string name;
-        public Entities.UserRole role = Entities.UserRole.User;
+        public Entities.UserRole role;
 
-        public User(string name, string password) {
+        public User(string name, string password, Entities.UserRole role) {
             this.name = name;
             this.password = password;
+            this.role = role;
         }
 
         public Car RentedCar { get; private set; }

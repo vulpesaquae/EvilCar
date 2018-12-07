@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
+using System.Xml.Linq;
 
 namespace EvilCar
 {
@@ -15,11 +16,26 @@ namespace EvilCar
 
         }
 
-        public static Database buildFromXMl(XmlDocument doc)
+        public static Database buildFromXMl(XDocument doc)
         {
             Database db = new Database();
 
-            throw new NotImplementedException("decode xml into the database");
+            try
+            {
+                foreach(var profile in doc.Descendants("Profile"))
+                {
+                    var name = profile.Element("Name").Value;
+                    var password = profile.Element("Password").Value;
+                    var role = profile.Element("Role").Value;
+
+                    db.allUsers.Add(new User(name, password, (Entities.UserRole)Enum.Parse(typeof(Entities.UserRole), role)));
+                }
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex);
+                Console.WriteLine(ex.Message);
+            }
 
             return db;
         }
@@ -34,11 +50,11 @@ namespace EvilCar
         /// </summary>
         /// <param name="username">the username you want to check</param>
         /// <returns>true if the username is in the database</returns>
-        public Boolean checkUsername(string username)
+        public bool checkUsername(string username)
         {
-            foreach(User u in allUsers)
+            foreach(User user in allUsers)
             {
-                if(u.name == username)
+                if(user.name == username)
                 {
                     return true;
                 }
@@ -47,18 +63,18 @@ namespace EvilCar
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="username">credentials to check</param>
         /// <param name="password">credentials to check</param>
         /// <returns>true if the credentials are correct</returns>
-        public Boolean checkCredentials(string username, string password)
+        public bool checkCredentials(string username, string password)
         {
-            foreach (User u in allUsers)
+            foreach (User user in allUsers)
             {
-                if (u.name == username)
+                if (user.name == username)
                 {
-                    if(u.password == password)
+                    if(user.password == Base64Decode(password)
                     {
                         return true;
                     }
@@ -72,17 +88,17 @@ namespace EvilCar
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="username">the name of the user you want to get</param>
         /// <returns>the User Object that has the username or null if there is no User with that name</returns>
         public User getUser(string username)
         {
-            foreach(User u in allUsers)
+            foreach(User user in allUsers)
             {
-                if(u.name == username)
+                if(user.name == username)
                 {
-                    return u;
+                    return user;
                 }
             }
             return null;

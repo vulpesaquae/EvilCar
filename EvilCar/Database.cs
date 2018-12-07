@@ -54,7 +54,7 @@ namespace EvilCar
         {
             foreach(User user in allUsers)
             {
-                if(user.name == username)
+                if(user.name.ToLower() == username.ToLower())
                 {
                     return true;
                 }
@@ -72,7 +72,7 @@ namespace EvilCar
         {
             foreach (User user in allUsers)
             {
-                if (user.name == username)
+                if (user.name.ToLower() == username.ToLower())
                 {
                     if(Base64Decode(user.password) == password)
                     {

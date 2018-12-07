@@ -67,6 +67,7 @@ namespace EvilCar
                                 case "?":
 
                                     break;
+                                case "quit": return;
                                 default:
                                     Console.WriteLine("There is no such command!");
                                     break;

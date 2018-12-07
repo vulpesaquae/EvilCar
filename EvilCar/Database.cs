@@ -74,7 +74,7 @@ namespace EvilCar
             {
                 if (user.name == username)
                 {
-                    if(user.password == Base64Decode(password)
+                    if(Base64Decode(user.password) == password)
                     {
                         return true;
                     }

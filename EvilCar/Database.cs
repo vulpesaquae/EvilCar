@@ -96,7 +96,7 @@ namespace EvilCar
         {
             foreach(User user in allUsers)
             {
-                if(user.name == username)
+                if(user.name.ToLower() == username.ToLower())
                 {
                     return user;
                 }

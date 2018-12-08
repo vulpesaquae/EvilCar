@@ -164,10 +164,11 @@ namespace EvilCar
             {
                 user.password = Base64Encode(newPlainPassword);
 
+                var content = "*************************\n\n" + $"Hello {username}! Your password was changed to \"{newPlainPassword}\"." + "\n\n*************************";
                 // fire and forget
                 // to show it is async, the text will be displayed after 5 seconds
                 // but we can continue working
-                SendInformation($"Hello {username}! Your password was changed to \"{newPlainPassword}\".");
+                SendInformation(content);
 
                 return true;
             }

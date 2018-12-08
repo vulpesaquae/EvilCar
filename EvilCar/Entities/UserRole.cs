@@ -6,6 +6,6 @@ namespace Entities
 {
     public enum UserRole
     {
-        User, Manager, Admin
+        Undefined, User, Manager, Admin
     }
 }

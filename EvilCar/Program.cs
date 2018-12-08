@@ -24,7 +24,7 @@ namespace EvilCar
             { Entities.CommandNames.createmanager, new Entities.CommandDescription("Create a new fleet manager", Entities.UserRole.Admin, "[name] [password] [fleetname, ...]") },
             { Entities.CommandNames.deletemanager, new Entities.CommandDescription("Delete a fleet manager", Entities.UserRole.Admin, "[name]") },
             { Entities.CommandNames.updatemanager, new Entities.CommandDescription("Update the password of a fleet manager", Entities.UserRole.Admin, "[name] [new password] [repeat password]") },
-            { Entities.CommandNames.updateprofile, new Entities.CommandDescription("Update the password of your own profile", Entities.UserRole.User, "[name] [new password] [repeat password]") },
+            { Entities.CommandNames.updateprofile, new Entities.CommandDescription("Update the password of your own profile", Entities.UserRole.Undefined, "[new password] [repeat password]") },
             { Entities.CommandNames.readuser, new Entities.CommandDescription("Read data of a user", Entities.UserRole.Manager, "[name]") },
             { Entities.CommandNames.createuser, new Entities.CommandDescription("Create a new profile for a customer", Entities.UserRole.Manager, "[name] [password]") },
             { Entities.CommandNames.updateuser, new Entities.CommandDescription("Update the password of a user", Entities.UserRole.Manager, "[name] [new password] [repeat password]") }
@@ -87,7 +87,7 @@ namespace EvilCar
                                 case nameof(Entities.CommandNames.help):
                                     foreach(var key in Commands.Keys)
                                     {
-                                        if (profile.role == Commands[key].role)
+                                        if (profile.role == Commands[key].role || Commands[key].role == Entities.UserRole.Undefined)
                                         {
                                             Console.WriteLine($"\n{key} {Commands[key].arguments}\n{Commands[key].description}");
                                         }
@@ -173,6 +173,16 @@ namespace EvilCar
                                             Console.WriteLine($"Cannot change password of {command_args[1]}");
                                     }
                                     break;
+                                // update profile
+                                case nameof(Entities.CommandNames.updateprofile):
+                                    if (CheckCommandAccessibility(profile, Entities.CommandNames.updatemanager) && CheckCommandArguments(command_args, 2))
+                                    {
+                                        if (command_args[1] == command_args[2] && db.UpdateUser(profile.name, command_args[1]))
+                                            Console.WriteLine($"Successfully changed the password of {command_args[1]}. He will be informed.");
+                                        else
+                                            Console.WriteLine($"Cannot change password of {profile.name}");
+                                    }
+                                    break;
                                 //
                                 default:
                                     Console.WriteLine("There is no such command!");
@@ -194,7 +204,7 @@ namespace EvilCar
         // check if the user is allowed to execute the command
         private static bool CheckCommandAccessibility(User profile, Entities.CommandNames commandName)
         {
-            if (!(profile.role == Commands[commandName].role))
+            if (!(profile.role == Commands[commandName].role) || Commands[commandName].role == Entities.UserRole.Undefined)
             {
                 Console.WriteLine("You have not the rights to execute this command.");
                 return false;

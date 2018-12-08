@@ -131,6 +131,7 @@ namespace EvilCar
         /// <param name="role">Role of the user</param>
         public void CreateUser(string username, string plainPassword, Entities.UserRole role)
         {
+            // TODO: create manager with a fleet
             if (!checkUsername(username) && plainPassword.Any())
             {
                 allUsers.Add(new User(username, Base64Encode(plainPassword), role));

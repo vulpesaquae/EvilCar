@@ -95,7 +95,27 @@ namespace EvilCar
                                     }
                                     break;
                                 // quit
-                                case nameof(Entities.CommandNames.quit): return;
+                                case nameof(Entities.CommandNames.quit):
+                                    db.safe("Profiles.xml");
+                                    return;
+                                // create admin
+                                case nameof(Entities.CommandNames.createadmin):
+                                    if(profile.role >= Commands[Entities.CommandNames.createadmin].role)
+                                    {
+                                        // check if the user entered all required arguments
+                                        // Length >= 3 because all additional input of the user can be ignored
+                                        // .Any to check if there is any character --> equal to .Length > 0 or .Count() > 0
+                                            // but shorter and (maybe) faster, because it return true for the first element
+                                            // the other two option count all elements
+                                        if (command_args.Length >= 3 && command_args[1].Any() && command_args[2].Any())
+                                        {
+                                            db.CreateUser(command_args[1], command_args[2], Entities.UserRole.Admin);
+                                        }
+
+                                        Console.WriteLine($"\"{command_args[1]}\" was created\n");
+                                    }
+                                    break;
+                                //
                                 default:
                                     Console.WriteLine("There is no such command!");
                                     break;

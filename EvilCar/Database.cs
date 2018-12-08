@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
@@ -16,12 +17,18 @@ namespace EvilCar
 
         }
 
+        /// <summary>
+        /// Load the database
+        /// </summary>
+        /// <param name="doc">File to load the data from</param>
+        /// <returns>Loaded data from the file</returns>
         public static Database buildFromXMl(XDocument doc)
         {
             Database db = new Database();
 
             try
             {
+                // Create all Profiles as User's
                 foreach(var profile in doc.Descendants("Profile"))
                 {
                     var name = profile.Element("Name").Value;
@@ -42,11 +49,23 @@ namespace EvilCar
 
         public void safe(string path)
         {
-            throw new NotImplementedException("encode db to xml");
+            XDocument xmlDoc = new XDocument();
+            var profiles = new XElement("Profiles");
+
+            foreach (var user in allUsers)
+            {
+                var profile = new XElement("Profile");
+                profile.Add(new XElement("Name", user.name));
+                profile.Add(new XElement("Password", user.password));
+                profile.Add(new XElement("Role", user.role));
+                profiles.Add(profile);
+            }
+            xmlDoc.Add(profiles);
+            xmlDoc.Save(path);
         }
 
         /// <summary>
-        /// checks if a username is in the database and returns true if so
+        /// Checks if a username is in the database and returns true if so
         /// </summary>
         /// <param name="username">the username you want to check</param>
         /// <returns>true if the username is in the database</returns>
@@ -63,10 +82,10 @@ namespace EvilCar
         }
 
         /// <summary>
-        ///
+        /// Check if the username and password are valid for a certain profile
         /// </summary>
-        /// <param name="username">credentials to check</param>
-        /// <param name="password">credentials to check</param>
+        /// <param name="username">name of the profile</param>
+        /// <param name="password">password of the profile</param>
         /// <returns>true if the credentials are correct</returns>
         public bool checkCredentials(string username, string password)
         {
@@ -88,10 +107,10 @@ namespace EvilCar
         }
 
         /// <summary>
-        ///
+        /// Get a specified User object
         /// </summary>
         /// <param name="username">the name of the user you want to get</param>
-        /// <returns>the User Object that has the username or null if there is no User with that name</returns>
+        /// <returns>User Object that has the username or null if there is no User with that name</returns>
         public User getUser(string username)
         {
             foreach(User user in allUsers)
@@ -102,6 +121,14 @@ namespace EvilCar
                 }
             }
             return null;
+        }
+
+        public void CreateUser(string username, string plainPassword, Entities.UserRole role)
+        {
+            if (!checkUsername(username) && plainPassword.Any())
+            {
+                allUsers.Add(new User(username, Base64Encode(plainPassword), role));
+            }
         }
 
         #region Base64

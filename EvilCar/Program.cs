@@ -16,15 +16,17 @@ namespace EvilCar
         private static Dictionary<Entities.CommandNames, Entities.CommandDescription> Commands = new Dictionary<Entities.CommandNames, Entities.CommandDescription>()
         {
             { Entities.CommandNames.quit, new Entities.CommandDescription("Close the program", Entities.UserRole.User)},
+            { Entities.CommandNames.listadmins, new Entities.CommandDescription("List all existing admin's", Entities.UserRole.Admin) },
+            { Entities.CommandNames.readadmin, new Entities.CommandDescription("Read data of a admin", Entities.UserRole.Admin, "[name]") },
+            { Entities.CommandNames.listmanagers, new Entities.CommandDescription("List all existing fleet manager's", Entities.UserRole.Admin) },
+            { Entities.CommandNames.readmanager, new Entities.CommandDescription("Read data of a fleet manager", Entities.UserRole.Admin,"[name]") },
             { Entities.CommandNames.createadmin, new Entities.CommandDescription("Create a new admin", Entities.UserRole.Admin, "[name] [password]") },
             { Entities.CommandNames.createmanager, new Entities.CommandDescription("Create a new fleet manager", Entities.UserRole.Admin, "[name] [password] [fleetname, ...]") },
             { Entities.CommandNames.deletemanager, new Entities.CommandDescription("Delete a fleet manager", Entities.UserRole.Admin, "[name]") },
-            { Entities.CommandNames.readadmin, new Entities.CommandDescription("Read data of a admin", Entities.UserRole.Admin, "[name]") },
-            { Entities.CommandNames.readmanager, new Entities.CommandDescription("Read data of a fleet manager", Entities.UserRole.Admin, "[name]") },
             { Entities.CommandNames.updatemanager, new Entities.CommandDescription("Update the password of a fleet manager", Entities.UserRole.Admin, "[name] [your password] [new password]") },
             { Entities.CommandNames.updateprofile, new Entities.CommandDescription("Update the password of your own profile", Entities.UserRole.User, "[name] [your password] [new password]") },
-            { Entities.CommandNames.createuser, new Entities.CommandDescription("Create a new profile for a customer", Entities.UserRole.Manager, "[name] [password]") },
             { Entities.CommandNames.readuser, new Entities.CommandDescription("Read data of a user", Entities.UserRole.Manager, "[name]") },
+            { Entities.CommandNames.createuser, new Entities.CommandDescription("Create a new profile for a customer", Entities.UserRole.Manager, "[name] [password]") },
             { Entities.CommandNames.updateuser, new Entities.CommandDescription("Update the password of a user", Entities.UserRole.Manager, "[name] [your password] [new password]") }
         };
 
@@ -51,8 +53,6 @@ namespace EvilCar
 
                 string username = Console.ReadLine();
 
-                // müssen wir den usernamen vorher wirklich beim einloggen überprüfen??
-                // wird ja bei CheckCredentials eh nochmal gemacht
                 if (!db.checkUsername(username))
                 {
                     Console.WriteLine("There is no such user...");
@@ -73,18 +73,18 @@ namespace EvilCar
                     //the main menue
                     while (true)
                     {
-                        Console.WriteLine("\nEnter the command you want to execute. If you don't know them, enter help");
+                        Console.WriteLine("Enter the command you want to execute. If you don't know them, enter help");
 
                         //TODO Commands Zeug
                         // TODO: die einzelnen case zweige in jeweils eine eigene funktion auslagern??
                         string[] command_args = Console.ReadLine().Split(' ');
                         if(command_args.Length > 0)
                         {
+                            Console.WriteLine("\n**********");
                             switch (command_args[0].ToLower())
                             {
                                 // help
                                 case nameof(Entities.CommandNames.help):
-                                    Console.WriteLine("\n**********");
                                     foreach(var key in Commands.Keys)
                                     {
                                         if (profile.role == Commands[key].role)
@@ -92,20 +92,55 @@ namespace EvilCar
                                             Console.WriteLine($"\n{key} {Commands[key].arguments}\n{Commands[key].description}");
                                         }
                                     }
-                                    Console.WriteLine("\n**********");
                                     break;
                                 // quit
                                 case nameof(Entities.CommandNames.quit):
                                     db.safe("Profiles.xml");
                                     return;
+                                // list admins
+                                case nameof(Entities.CommandNames.listadmins):
+                                    foreach(var user in db.GetUsersFromRole(Entities.UserRole.Admin))
+                                    {
+                                        Console.WriteLine(user.name);
+                                    }
+                                    break;
+                                // read admin
+                                case nameof(Entities.CommandNames.readadmin):
+                                    if(CheckCommandAccessibility(profile, Entities.CommandNames.readadmin) && CheckCommandArguments(command_args, 1))
+                                    {
+                                        var user = db.getUser(command_args[1]);
+                                        if(user != null && user.role == Entities.UserRole.Admin)
+                                            Console.WriteLine($"Name: {user.name}");
+                                        else
+                                            Console.WriteLine($"User {user.name} does not exist");
+                                    }
+                                    break;
+                                // list manager
+                                case nameof(Entities.CommandNames.listmanagers):
+                                    foreach (var user in db.GetUsersFromRole(Entities.UserRole.Manager))
+                                    {
+                                        Console.WriteLine(user.name);
+                                    }
+                                    break;
+                                // read manager
+                                case nameof(Entities.CommandNames.readmanager):
+                                    if (CheckCommandAccessibility(profile, Entities.CommandNames.readmanager) && CheckCommandArguments(command_args, 1))
+                                    {
+                                        var user = db.getUser(command_args[1]);
+                                        if (user != null && user.role == Entities.UserRole.Manager)
+                                            Console.WriteLine($"Name: {user.name}");
+                                        else
+                                            Console.WriteLine($"User {user.name} does not exist");
+                                    }
+                                    break;
                                 // create admin
                                 case nameof(Entities.CommandNames.createadmin):
                                     if(CheckCommandAccessibility(profile, Entities.CommandNames.createadmin) && CheckCommandArguments(command_args, 2))
                                     {
                                         if (db.CreateUser(command_args[1], command_args[2], Entities.UserRole.Admin))
-                                            Console.WriteLine($"Your created \"{command_args[1]}\"\n");
+                                            Console.WriteLine($"Your created \"{command_args[1]}\"");
                                         else
-                                            Console.WriteLine($"Cannot create \"{command_args[1]}\"\n");
+                                            Console.WriteLine($"Cannot create \"{command_args[1]}\"");
                                     }
                                     break;
                                 // create manager
@@ -113,9 +148,9 @@ namespace EvilCar
                                     if(CheckCommandAccessibility(profile, Entities.CommandNames.createmanager) && CheckCommandArguments(command_args, 3))
                                     {
                                         if(db.CreateUser(command_args[1], command_args[2], Entities.UserRole.Manager))
-                                            Console.WriteLine($"Your created \"{command_args[1]}\"\n");
+                                            Console.WriteLine($"Your created \"{command_args[1]}\"");
                                         else
-                                            Console.WriteLine($"Cannot create \"{command_args[1]}\"\n");
+                                            Console.WriteLine($"Cannot create \"{command_args[1]}\"");
                                     }
                                     break;
                                 // delete manager
@@ -123,9 +158,9 @@ namespace EvilCar
                                     if(CheckCommandAccessibility(profile, Entities.CommandNames.deletemanager) && CheckCommandArguments(command_args, 1))
                                     {
                                         if (db.RemoveUser(command_args[1]))
-                                            Console.WriteLine($"You removed \"{command_args[1]}\"\n");
+                                            Console.WriteLine($"You removed \"{command_args[1]}\"");
                                         else
-                                            Console.WriteLine($"Cannot remove \"{command_args[1]}\"\n");
+                                            Console.WriteLine($"Cannot remove \"{command_args[1]}\"");
                                     }
                                     break;
                                 //
@@ -133,6 +168,7 @@ namespace EvilCar
                                     Console.WriteLine("There is no such command!");
                                     break;
                             }
+                            Console.WriteLine("**********\n");
                         }
                     }
                 }

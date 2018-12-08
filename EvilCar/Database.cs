@@ -110,6 +110,13 @@ namespace EvilCar
         public User getUser(string username) => allUsers.SingleOrDefault(x => x.name.ToLower() == username.ToLower());
 
         /// <summary>
+        /// Get a list of users with a specified role
+        /// </summary>
+        /// <param name="role">Role the user must have</param>
+        /// <returns>List of users with a specified role</returns>
+        public IEnumerable<User> GetUsersFromRole(Entities.UserRole role) => allUsers.Where(x => x.role == role);
+
+        /// <summary>
         /// Add a new User object to the database
         /// </summary>
         /// <param name="username">Name of the user</param>
@@ -134,6 +141,8 @@ namespace EvilCar
         public bool RemoveUser(string username)
         {
             var user = getUser(username);
+            // there is a user AND user is not a manager OR there is more than one manager
+            // delete the manager only, if there are 2 or more
             if (user != null && (user.role != Entities.UserRole.Manager || allUsers.Count(x => x.role == Entities.UserRole.Manager) > 1))
             {
                 return allUsers.Remove(user);

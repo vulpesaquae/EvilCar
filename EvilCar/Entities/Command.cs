@@ -4,16 +4,18 @@
     {
         help,
         quit,
-        createadmin,
+        listadmins,
+        readmanager,
+        listmanagers,
         readadmin,
+        createadmin,
         createmanager,
         deletemanager,
         updatemanager,
-        readmanager,
         updateprofile,
+        readuser,
         createuser,
         updateuser,
-        readuser,
     }
 
     public struct CommandDescription

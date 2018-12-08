@@ -123,12 +123,32 @@ namespace EvilCar
             return null;
         }
 
+        /// <summary>
+        /// Add a new User object to the database
+        /// </summary>
+        /// <param name="username">Name of the user</param>
+        /// <param name="plainPassword">Password in plain text</param>
+        /// <param name="role">Role of the user</param>
         public void CreateUser(string username, string plainPassword, Entities.UserRole role)
         {
             if (!checkUsername(username) && plainPassword.Any())
             {
                 allUsers.Add(new User(username, Base64Encode(plainPassword), role));
             }
+        }
+
+        /// <summary>
+        /// Remove a specified User object from the database
+        /// </summary>
+        /// <param name="username">Name of the User object to remove</param>
+        /// <returns>True if the user was removed or false if not</returns>
+        public bool RemoveUser(string username)
+        {
+            if(checkUsername(username))
+            {
+                return allUsers.Remove(allUsers.Single(x => x.name.Equals(username)));
+            }
+            return false;
         }
 
         #region Base64

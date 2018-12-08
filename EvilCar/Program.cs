@@ -88,7 +88,7 @@ namespace EvilCar
                                     Console.WriteLine();
                                     foreach(var key in Commands.Keys)
                                     {
-                                        if (profile.role >= Commands[key].role)
+                                        if (profile.role == Commands[key].role)
                                         {
                                             Console.WriteLine($"{key} {Commands[key].arguments}\n{Commands[key].description}\n");
                                         }
@@ -100,7 +100,7 @@ namespace EvilCar
                                     return;
                                 // create admin
                                 case nameof(Entities.CommandNames.createadmin):
-                                    if(profile.role >= Commands[Entities.CommandNames.createadmin].role)
+                                    if(profile.role == Commands[Entities.CommandNames.createadmin].role)
                                     {
                                         // check if the user entered all required arguments
                                         // Length >= 3 because all additional input of the user can be ignored
@@ -110,9 +110,32 @@ namespace EvilCar
                                         if (command_args.Length >= 3 && command_args[1].Any() && command_args[2].Any())
                                         {
                                             db.CreateUser(command_args[1], command_args[2], Entities.UserRole.Admin);
+                                            Console.WriteLine($"Your created \"{command_args[1]}\"\n");
                                         }
-
-                                        Console.WriteLine($"\"{command_args[1]}\" was created\n");
+                                        else
+                                        {
+                                            Console.WriteLine("You are missing some of the arguments");
+                                        }
+                                    }
+                                    break;
+                                // delete manager
+                                case nameof(Entities.CommandNames.deletemanager):
+                                    if(profile.role == Commands[Entities.CommandNames.deletemanager].role)
+                                    {
+                                        // no need to check, if there is any useful data in array index 1
+                                        // the function will check, if the user exists
+                                        // so it will not do anything, if the user doesnt entered a valid username
+                                        if(command_args.Length >= 2)
+                                        {
+                                            if (db.RemoveUser(command_args[1]))
+                                            {
+                                                Console.WriteLine($"You removed \"{command_args[1]}");
+                                            }
+                                        }
+                                        else
+                                        {
+                                            Console.WriteLine("You are missing some of the arguments");
+                                        }
                                     }
                                     break;
                                 //

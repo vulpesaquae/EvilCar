@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -148,6 +149,38 @@ namespace EvilCar
                 return allUsers.Remove(user);
             }
             return false;
+        }
+
+        /// <summary>
+        /// Assign a new password for a user and send a async information
+        /// </summary>
+        /// <param name="username">Name of the user</param>
+        /// <param name="newPlainPassword">New password as plain text</param>
+        /// <returns>True if the password was changed successfuly, false otherwise</returns>
+        public bool UpdateUser(string username, string newPlainPassword)
+        {
+            var user = getUser(username);
+            if(user != null)
+            {
+                user.password = Base64Encode(newPlainPassword);
+
+                // fire and forget
+                // to show it is async, the text will be displayed after 5 seconds
+                // but we can continue working
+                SendInformation($"Hello {username}! Your password was changed to \"{newPlainPassword}\".");
+
+                return true;
+            }
+            return false;
+        }
+
+        private async Task SendInformation(string content)
+        {
+            await Task.Run(() =>
+            {
+                System.Threading.Thread.Sleep(5000);
+                Console.WriteLine(content);
+            });
         }
 
         #region Base64

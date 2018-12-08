@@ -23,11 +23,11 @@ namespace EvilCar
             { Entities.CommandNames.createadmin, new Entities.CommandDescription("Create a new admin", Entities.UserRole.Admin, "[name] [password]") },
             { Entities.CommandNames.createmanager, new Entities.CommandDescription("Create a new fleet manager", Entities.UserRole.Admin, "[name] [password] [fleetname, ...]") },
             { Entities.CommandNames.deletemanager, new Entities.CommandDescription("Delete a fleet manager", Entities.UserRole.Admin, "[name]") },
-            { Entities.CommandNames.updatemanager, new Entities.CommandDescription("Update the password of a fleet manager", Entities.UserRole.Admin, "[name] [your password] [new password]") },
-            { Entities.CommandNames.updateprofile, new Entities.CommandDescription("Update the password of your own profile", Entities.UserRole.User, "[name] [your password] [new password]") },
+            { Entities.CommandNames.updatemanager, new Entities.CommandDescription("Update the password of a fleet manager", Entities.UserRole.Admin, "[name] [new password] [repeat password]") },
+            { Entities.CommandNames.updateprofile, new Entities.CommandDescription("Update the password of your own profile", Entities.UserRole.User, "[name] [new password] [repeat password]") },
             { Entities.CommandNames.readuser, new Entities.CommandDescription("Read data of a user", Entities.UserRole.Manager, "[name]") },
             { Entities.CommandNames.createuser, new Entities.CommandDescription("Create a new profile for a customer", Entities.UserRole.Manager, "[name] [password]") },
-            { Entities.CommandNames.updateuser, new Entities.CommandDescription("Update the password of a user", Entities.UserRole.Manager, "[name] [your password] [new password]") }
+            { Entities.CommandNames.updateuser, new Entities.CommandDescription("Update the password of a user", Entities.UserRole.Manager, "[name] [new password] [repeat password]") }
         };
 
         // in der Main soll die ganze Menünavigation laufen. Ob mit tasten oder mit befehlen ist mir egal...
@@ -161,6 +161,16 @@ namespace EvilCar
                                             Console.WriteLine($"You removed \"{command_args[1]}\"");
                                         else
                                             Console.WriteLine($"Cannot remove \"{command_args[1]}\"");
+                                    }
+                                    break;
+                                // update manager
+                                case nameof(Entities.CommandNames.updatemanager):
+                                    if(CheckCommandAccessibility(profile, Entities.CommandNames.updatemanager) && CheckCommandArguments(command_args, 3))
+                                    {
+                                        if (db.getUser(command_args[1]).role == Entities.UserRole.Manager && command_args[2] == command_args[3] && db.UpdateUser(command_args[1], command_args[2]))
+                                            Console.WriteLine($"Successfully changed the password of {command_args[1]}. He will be informed.");
+                                        else
+                                            Console.WriteLine($"Cannot change password of {command_args[1]}");
                                     }
                                     break;
                                 //

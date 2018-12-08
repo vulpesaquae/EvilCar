@@ -46,6 +46,7 @@
     <Compile Include="Database.cs" />
     <Compile Include="Entities\Branch.cs" />
     <Compile Include="Entities\Car.cs" />
+    <Compile Include="Entities\Command.cs" />
     <Compile Include="Entities\Fleet.cs" />
     <Compile Include="Entities\User.cs" />
     <Compile Include="Entities\UserRole.cs" />

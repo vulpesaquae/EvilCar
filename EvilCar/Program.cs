@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -9,6 +11,13 @@ namespace EvilCar
     class Program
     {
         public const string PROFILES_FILENAME = "Profiles.xml";
+
+        private static Dictionary<Entities.Command, string> Commands = new Dictionary<Entities.Command, string>()
+        {
+            { Entities.Command.quit, "Close the program" },
+
+        };
+
 
         // in der Main soll die ganze Menünavigation laufen. Ob mit tasten oder mit befehlen ist mir egal...
         static void Main(string[] args)
@@ -55,19 +64,21 @@ namespace EvilCar
                     //the main menue
                     while (true)
                     {
-                        Console.WriteLine("Enter the command you want to execute. If you don't know them, enter help or ?");
+                        Console.WriteLine("Enter the command you want to execute. If you don't know them, enter help");
 
                         //TODO Commands Zeug
                         string[] command_args = Console.ReadLine().Split(' ');
                         if(command_args.Length > 0)
                         {
-                            switch (command_args[0])
+                            switch (command_args[0].ToLower())
                             {
-                                case "help":
-                                case "?":
-
+                                case nameof(Entities.Command.help):
+                                    foreach(var key in Commands.Keys)
+                                    {
+                                        Console.WriteLine($"{key}:\t{Commands[key]}");
+                                    }
                                     break;
-                                case "quit": return;
+                                case nameof(Entities.Command.quit): return;
                                 default:
                                     Console.WriteLine("There is no such command!");
                                     break;

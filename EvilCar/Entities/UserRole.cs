@@ -4,7 +4,6 @@ using System.Text;
 
 namespace Entities
 {
-
     public enum UserRole
     {
         User, Manager, Admin

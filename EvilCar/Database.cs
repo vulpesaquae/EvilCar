@@ -47,6 +47,10 @@ namespace EvilCar
             return db;
         }
 
+        /// <summary>
+        /// Write the database to a xml file
+        /// </summary>
+        /// <param name="path">Path to the xml file to write or to create a new one</param>
         public void safe(string path)
         {
             XDocument xmlDoc = new XDocument();
@@ -89,19 +93,11 @@ namespace EvilCar
         /// <returns>true if the credentials are correct</returns>
         public bool checkCredentials(string username, string password)
         {
-            foreach (User user in allUsers)
+            var user = getUser(username);
+
+            if(user != null)
             {
-                if (user.name.ToLower() == username.ToLower())
-                {
-                    if(Base64Decode(user.password) == password)
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
+                return Base64Decode(user.password) == password;
             }
             return false;
         }
@@ -111,17 +107,7 @@ namespace EvilCar
         /// </summary>
         /// <param name="username">the name of the user you want to get</param>
         /// <returns>User Object that has the username or null if there is no User with that name</returns>
-        public User getUser(string username)
-        {
-            foreach(User user in allUsers)
-            {
-                if(user.name.ToLower() == username.ToLower())
-                {
-                    return user;
-                }
-            }
-            return null;
-        }
+        public User getUser(string username) => allUsers.SingleOrDefault(x => x.name.ToLower() == username.ToLower());
 
         /// <summary>
         /// Add a new User object to the database
@@ -129,13 +115,15 @@ namespace EvilCar
         /// <param name="username">Name of the user</param>
         /// <param name="plainPassword">Password in plain text</param>
         /// <param name="role">Role of the user</param>
-        public void CreateUser(string username, string plainPassword, Entities.UserRole role)
+        public bool CreateUser(string username, string plainPassword, Entities.UserRole role)
         {
             // TODO: create manager with a fleet
             if (!checkUsername(username) && plainPassword.Any())
             {
                 allUsers.Add(new User(username, Base64Encode(plainPassword), role));
+                return true;
             }
+            return false;
         }
 
         /// <summary>
@@ -145,9 +133,10 @@ namespace EvilCar
         /// <returns>True if the user was removed or false if not</returns>
         public bool RemoveUser(string username)
         {
-            if(checkUsername(username))
+            var user = getUser(username);
+            if (user != null && (user.role != Entities.UserRole.Manager || allUsers.Count(x => x.role == Entities.UserRole.Manager) > 1))
             {
-                return allUsers.Remove(allUsers.Single(x => x.name.Equals(username)));
+                return allUsers.Remove(user);
             }
             return false;
         }

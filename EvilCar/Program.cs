@@ -68,12 +68,12 @@ namespace EvilCar
                 if (db.checkCredentials(username, password))
                 {
                     User profile = db.getUser(username);
-                    Console.WriteLine($"Hello {profile.name}! You are now logged in.");
+                    Console.WriteLine($"\nHello {profile.name}! You are now logged in.");
 
                     //the main menue
                     while (true)
                     {
-                        Console.WriteLine("Enter the command you want to execute. If you don't know them, enter help");
+                        Console.WriteLine("\nEnter the command you want to execute. If you don't know them, enter help");
 
                         //TODO Commands Zeug
                         // TODO: die einzelnen case zweige in jeweils eine eigene funktion auslagern??
@@ -84,14 +84,15 @@ namespace EvilCar
                             {
                                 // help
                                 case nameof(Entities.CommandNames.help):
-                                    Console.WriteLine();
+                                    Console.WriteLine("\n**********");
                                     foreach(var key in Commands.Keys)
                                     {
                                         if (profile.role == Commands[key].role)
                                         {
-                                            Console.WriteLine($"{key} {Commands[key].arguments}\n{Commands[key].description}\n");
+                                            Console.WriteLine($"\n{key} {Commands[key].arguments}\n{Commands[key].description}");
                                         }
                                     }
+                                    Console.WriteLine("\n**********");
                                     break;
                                 // quit
                                 case nameof(Entities.CommandNames.quit):
@@ -101,15 +102,20 @@ namespace EvilCar
                                 case nameof(Entities.CommandNames.createadmin):
                                     if(CheckCommandAccessibility(profile, Entities.CommandNames.createadmin) && CheckCommandArguments(command_args, 2))
                                     {
-                                        db.CreateUser(command_args[1], command_args[2], Entities.UserRole.Admin);
-                                        Console.WriteLine($"Your created \"{command_args[1]}\"\n");
+                                        if (db.CreateUser(command_args[1], command_args[2], Entities.UserRole.Admin))
+                                            Console.WriteLine($"Your created \"{command_args[1]}\"\n");
+                                        else
+                                            Console.WriteLine($"Cannot create \"{command_args[1]}\"\n");
                                     }
                                     break;
                                 // create manager
                                 case nameof(Entities.CommandNames.createmanager):
                                     if(CheckCommandAccessibility(profile, Entities.CommandNames.createmanager) && CheckCommandArguments(command_args, 3))
                                     {
-                                        db.CreateUser(command_args[1], command_args[2], Entities.UserRole.Manager);
+                                        if(db.CreateUser(command_args[1], command_args[2], Entities.UserRole.Manager))
+                                            Console.WriteLine($"Your created \"{command_args[1]}\"\n");
+                                        else
+                                            Console.WriteLine($"Cannot create \"{command_args[1]}\"\n");
                                     }
                                     break;
                                 // delete manager
@@ -117,9 +123,9 @@ namespace EvilCar
                                     if(CheckCommandAccessibility(profile, Entities.CommandNames.deletemanager) && CheckCommandArguments(command_args, 1))
                                     {
                                         if (db.RemoveUser(command_args[1]))
-                                        {
-                                            Console.WriteLine($"You removed \"{command_args[1]}");
-                                        }
+                                            Console.WriteLine($"You removed \"{command_args[1]}\"\n");
+                                        else
+                                            Console.WriteLine($"Cannot remove \"{command_args[1]}\"\n");
                                     }
                                     break;
                                 //

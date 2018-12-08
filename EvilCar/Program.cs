@@ -13,17 +13,20 @@ namespace EvilCar
         public const string PROFILES_FILENAME = "Profiles.xml";
 
         // so können wir alle commands bei help relativ einfach anzeigen lassen
-
+        // auf die rollen können auch einfach überprüft werden
         private static Dictionary<Entities.CommandNames, Entities.CommandDescription> Commands = new Dictionary<Entities.CommandNames, Entities.CommandDescription>()
         {
             { Entities.CommandNames.quit, new Entities.CommandDescription("Close the program", Entities.UserRole.User)},
             { Entities.CommandNames.createadmin, new Entities.CommandDescription("Create a new admin", Entities.UserRole.Admin, "[name] [password]") },
             { Entities.CommandNames.createmanager, new Entities.CommandDescription("Create a new fleet manager", Entities.UserRole.Admin, "[name] [password] [fleets, ...]") },
             { Entities.CommandNames.deletemanager, new Entities.CommandDescription("Delete a fleet manager", Entities.UserRole.Admin, "[name]") },
-            { Entities.CommandNames.readadmin, new Entities.CommandDescription("Read a data of a admin", Entities.UserRole.Admin, "[name]") },
-            { Entities.CommandNames.readmanager, new Entities.CommandDescription("Read a data of a fleet manager", Entities.UserRole.Manager, "[name]") },
-            { Entities.CommandNames.updatemanager, new Entities.CommandDescription("Update the password of a fleet manager", Entities.UserRole.Manager, "[name] [old password] [new password]") },
-            { Entities.CommandNames.updateprofile, new Entities.CommandDescription("Update the password of your own profile", Entities.UserRole.User, "[name] [old password] [new password]") }
+            { Entities.CommandNames.readadmin, new Entities.CommandDescription("Read data of a admin", Entities.UserRole.Admin, "[name]") },
+            { Entities.CommandNames.readmanager, new Entities.CommandDescription("Read data of a fleet manager", Entities.UserRole.Admin, "[name]") },
+            { Entities.CommandNames.updatemanager, new Entities.CommandDescription("Update the password of a fleet manager", Entities.UserRole.Admin, "[name] [your password] [new password]") },
+            { Entities.CommandNames.updateprofile, new Entities.CommandDescription("Update the password of your own profile", Entities.UserRole.User, "[name] [your password] [new password]") },
+            { Entities.CommandNames.createuser, new Entities.CommandDescription("Create a new profile for a customer", Entities.UserRole.Manager, "[name] [password]") },
+            { Entities.CommandNames.readuser, new Entities.CommandDescription("Read data of a user", Entities.UserRole.Manager, "[name]") },
+            { Entities.CommandNames.updateuser, new Entities.CommandDescription("Update the password of a user", Entities.UserRole.Manager, "[name] [your password] [new password]") }
         };
 
 

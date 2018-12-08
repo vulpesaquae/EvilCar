@@ -10,7 +10,10 @@
         deletemanager,
         updatemanager,
         readmanager,
-        updateprofile
+        updateprofile,
+        createuser,
+        updateuser,
+        readuser,
     }
 
     public struct CommandDescription

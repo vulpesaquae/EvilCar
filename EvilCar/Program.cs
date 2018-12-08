@@ -12,10 +12,18 @@ namespace EvilCar
     {
         public const string PROFILES_FILENAME = "Profiles.xml";
 
-        private static Dictionary<Entities.Command, string> Commands = new Dictionary<Entities.Command, string>()
-        {
-            { Entities.Command.quit, "Close the program" },
+        // so können wir alle commands bei help relativ einfach anzeigen lassen
 
+        private static Dictionary<Entities.CommandNames, Entities.CommandDescription> Commands = new Dictionary<Entities.CommandNames, Entities.CommandDescription>()
+        {
+            { Entities.CommandNames.quit, new Entities.CommandDescription("Close the program", Entities.UserRole.User)},
+            { Entities.CommandNames.createadmin, new Entities.CommandDescription("Create a new admin", Entities.UserRole.Admin, "[name] [password]") },
+            { Entities.CommandNames.createmanager, new Entities.CommandDescription("Create a new fleet manager", Entities.UserRole.Admin, "[name] [password] [fleets, ...]") },
+            { Entities.CommandNames.deletemanager, new Entities.CommandDescription("Delete a fleet manager", Entities.UserRole.Admin, "[name]") },
+            { Entities.CommandNames.readadmin, new Entities.CommandDescription("Read a data of a admin", Entities.UserRole.Admin, "[name]") },
+            { Entities.CommandNames.readmanager, new Entities.CommandDescription("Read a data of a fleet manager", Entities.UserRole.Manager, "[name]") },
+            { Entities.CommandNames.updatemanager, new Entities.CommandDescription("Update the password of a fleet manager", Entities.UserRole.Manager, "[name] [old password] [new password]") },
+            { Entities.CommandNames.updateprofile, new Entities.CommandDescription("Update the password of your own profile", Entities.UserRole.User, "[name] [old password] [new password]") }
         };
 
 
@@ -72,13 +80,19 @@ namespace EvilCar
                         {
                             switch (command_args[0].ToLower())
                             {
-                                case nameof(Entities.Command.help):
+                                // help
+                                case nameof(Entities.CommandNames.help):
+                                    Console.WriteLine();
                                     foreach(var key in Commands.Keys)
                                     {
-                                        Console.WriteLine($"{key}:\t{Commands[key]}");
+                                        if (profile.role >= Commands[key].role)
+                                        {
+                                            Console.WriteLine($"{key} {Commands[key].arguments}\n{Commands[key].description}\n");
+                                        }
                                     }
                                     break;
-                                case nameof(Entities.Command.quit): return;
+                                // quit
+                                case nameof(Entities.CommandNames.quit): return;
                                 default:
                                     Console.WriteLine("There is no such command!");
                                     break;

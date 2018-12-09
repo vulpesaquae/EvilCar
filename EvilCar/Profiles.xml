@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<Profiles>
+<EvilCars>
   <Profile>
     <Name>Admin</Name>
     <Password>QWRtaW4xMjM=</Password>
@@ -15,4 +15,18 @@
     <Password>QWRtaW4xMjM=</Password>
     <Role>User</Role>
   </Profile>
-</Profiles>
+  <Branch>
+    <Name>Stuttgart</Name>
+    <Fleets>
+      <Fleet>
+        <Name>Nord</Name>
+      </Fleet>
+      <Fleet>
+        <Name>Mitte</Name>
+      </Fleet>
+      <Fleet>
+        <Name>Süd</Name>
+      </Fleet>
+    </Fleets>
+  </Branch>
+</EvilCars>

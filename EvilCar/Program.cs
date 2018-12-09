@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Xml;
 using System.Xml.Linq;
 
 namespace EvilCar
@@ -27,20 +25,12 @@ namespace EvilCar
             { Entities.CommandNames.updateprofile, new Entities.CommandDescription("Update the password of your own profile", Entities.UserRole.Undefined, "[new password] [repeat password]") },
             { Entities.CommandNames.readuser, new Entities.CommandDescription("Read data of a user", Entities.UserRole.Manager, "[name]") },
             { Entities.CommandNames.createuser, new Entities.CommandDescription("Create a new profile for a customer", Entities.UserRole.Manager, "[name] [password]") },
-            { Entities.CommandNames.updateuser, new Entities.CommandDescription("Update the password of a user", Entities.UserRole.Manager, "[name] [new password] [repeat password]") }
+            { Entities.CommandNames.updateuser, new Entities.CommandDescription("Update the password of a user", Entities.UserRole.Manager, "[name] [new password] [repeat password]") },
+            { Entities.CommandNames.createbranch, new Entities.CommandDescription("Create a new branch", Entities.UserRole.Admin, "[name] [fleet, ...]") }
         };
 
-        // in der Main soll die ganze Menünavigation laufen. Ob mit tasten oder mit befehlen ist mir egal...
         static void Main(string[] args)
         {
-            // hab das über Xml.Linq gemacht
-            // kam mir einfacher vor
-            // sollte das über XmlDocument einfacher sein, einfach abändern
-            // so kann ich aber noch weiter arbeiten
-
-            //XmlDocument doc = new XmlDocument();
-            //doc.LoadXml(new StreamReader(PROFILES_FILENAME).ReadToEnd());
-
             var xmlDoc = XDocument.Load("Profiles.xml");
 
             Database db = Database.buildFromXMl(xmlDoc);
@@ -181,6 +171,16 @@ namespace EvilCar
                                             Console.WriteLine($"Successfully changed the password of {command_args[1]}. He will be informed.");
                                         else
                                             Console.WriteLine($"Cannot change password of {profile.name}");
+                                    }
+                                    break;
+                                // create branch
+                                case nameof(Entities.CommandNames.createbranch):
+                                    if(CheckCommandAccessibility(profile, Entities.CommandNames.createbranch) && CheckCommandArguments(command_args, 1))
+                                    {
+                                        if (db.CreateBranch(command_args[1]))
+                                            Console.WriteLine($"Created branch {command_args[1]}");
+                                        else
+                                            Console.WriteLine($"Cannot create branch {command_args[1]}");
                                     }
                                     break;
                                 //

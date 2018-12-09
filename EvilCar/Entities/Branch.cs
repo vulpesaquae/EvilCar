@@ -12,12 +12,13 @@ namespace EvilCar
     public class Branch
     {
         public string name;
+        public List<Fleet> fleets = new List<Fleet>();
 
-        public Branch(string name)
+        public Branch(string name, List<Fleet> fleets)
         {
             this.name = name;
+            if (fleets != null)
+                this.fleets = fleets;
         }
-
-        List<Fleet> fleets = new List<Fleet>();
     }
 }

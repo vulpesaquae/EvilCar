@@ -16,6 +16,7 @@
         readuser,
         createuser,
         updateuser,
+        createbranch
     }
 
     public struct CommandDescription

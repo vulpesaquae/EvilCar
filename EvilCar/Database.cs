@@ -38,6 +38,21 @@ namespace EvilCar
 
                     db.allUsers.Add(new User(name, password, (Entities.UserRole)Enum.Parse(typeof(Entities.UserRole), role)));
                 }
+
+                // Create all branches
+                foreach(var branch in doc.Descendants("Branch"))
+                {
+                    var branchname = branch.Element("Name").Value;
+                    var fleets = new List<Fleet>();
+
+                    foreach(var fleet in branch.Descendants("Fleet"))
+                    {
+                        var fleetname = fleet.Element("Name").Value;
+                        fleets.Add(new Fleet(fleetname));
+                    }
+
+                    db.allBranches.Add(new Branch(branchname, fleets));
+                }
             }
             catch(Exception ex)
             {
@@ -55,36 +70,53 @@ namespace EvilCar
         public void safe(string path)
         {
             XDocument xmlDoc = new XDocument();
-            var profiles = new XElement("Profiles");
+            var evilcars = new XElement("EvilCars");
 
             foreach (var user in allUsers)
             {
-                var profile = new XElement("Profile");
-                profile.Add(new XElement("Name", user.name));
-                profile.Add(new XElement("Password", user.password));
-                profile.Add(new XElement("Role", user.role));
-                profiles.Add(profile);
+                var xuser = new XElement("Profile");
+                xuser.Add(new XElement("Name", user.name));
+                xuser.Add(new XElement("Password", user.password));
+                xuser.Add(new XElement("Role", user.role));
+                evilcars.Add(xuser);
             }
-            xmlDoc.Add(profiles);
+
+            // safe all branches
+            foreach(var branch in allBranches)
+            {
+                var xbranch = new XElement("Branch");
+                xbranch.Add(new XElement("Name", branch.name));
+
+                // safe all fleets of the branch
+                if (branch.fleets.Any())
+                {
+                    var xfleets = new XElement("Fleets");
+
+                    foreach (var fleet in branch.fleets)
+                    {
+                        var xfleet = new XElement("Fleet");
+                        xfleet.Add(new XElement("Name", fleet.name));
+
+                        xfleets.Add(xfleet);
+                    }
+
+                    xbranch.Add(xfleets);
+                }
+                evilcars.Add(xbranch);
+            }
+
+            xmlDoc.Add(evilcars);
             xmlDoc.Save(path);
         }
+
+        #region User Tasks
 
         /// <summary>
         /// Checks if a username is in the database and returns true if so
         /// </summary>
         /// <param name="username">the username you want to check</param>
         /// <returns>true if the username is in the database</returns>
-        public bool checkUsername(string username)
-        {
-            foreach(User user in allUsers)
-            {
-                if(user.name.ToLower() == username.ToLower())
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
+        public bool checkUsername(string username) => allUsers.Any(x => x.name.ToLower() == username.ToLower());
 
         /// <summary>
         /// Check if the username and password are valid for a certain profile
@@ -98,7 +130,7 @@ namespace EvilCar
 
             if(user != null)
             {
-                return Base64Decode(user.password) == password;
+                return password == Base64Decode(user.password);
             }
             return false;
         }
@@ -183,6 +215,22 @@ namespace EvilCar
                 Console.WriteLine(content);
             });
         }
+
+        #endregion User Tasks
+
+        #region Branch Tasks
+
+        public bool CreateBranch(string name, List<Fleet> fleets = null)
+        {
+            if(allBranches.All(x => x.name != name))
+            {
+                allBranches.Add(new Branch(name, fleets));
+                return true;
+            }
+            return false;
+        }
+
+        #endregion Branch Tasks
 
         #region Base64
 

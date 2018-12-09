@@ -9,8 +9,6 @@ namespace EvilCar
     {
         public const string DATA_FILENAME = "EvilCar.xml";
 
-        // so können wir alle commands bei help relativ einfach anzeigen lassen
-        // auf die rollen können auch einfach überprüft werden
         private static Dictionary<Entities.CommandNames, Entities.CommandDescription> Commands = new Dictionary<Entities.CommandNames, Entities.CommandDescription>()
         {
             { Entities.CommandNames.quit, new Entities.CommandDescription("Close the program", Entities.UserRole.User)},
@@ -19,14 +17,14 @@ namespace EvilCar
             { Entities.CommandNames.listmanagers, new Entities.CommandDescription("List all existing fleet manager's", Entities.UserRole.Admin) },
             { Entities.CommandNames.readmanager, new Entities.CommandDescription("Read data of a fleet manager", Entities.UserRole.Admin,"[name]") },
             { Entities.CommandNames.createadmin, new Entities.CommandDescription("Create a new admin", Entities.UserRole.Admin, "[name] [password]") },
-            { Entities.CommandNames.createmanager, new Entities.CommandDescription("Create a new fleet manager", Entities.UserRole.Admin, "[name] [password] [fleetname, ...]") },
+            { Entities.CommandNames.createmanager, new Entities.CommandDescription("Create a new fleet manager", Entities.UserRole.Admin, "[name] [password]") },
             { Entities.CommandNames.deletemanager, new Entities.CommandDescription("Delete a fleet manager", Entities.UserRole.Admin, "[name]") },
             { Entities.CommandNames.updatemanager, new Entities.CommandDescription("Update the password of a fleet manager", Entities.UserRole.Admin, "[name] [new password] [repeat password]") },
             { Entities.CommandNames.updateprofile, new Entities.CommandDescription("Update the password of your own profile", Entities.UserRole.Undefined, "[new password] [repeat password]") },
             { Entities.CommandNames.readuser, new Entities.CommandDescription("Read data of a user", Entities.UserRole.Manager, "[name]") },
             { Entities.CommandNames.createuser, new Entities.CommandDescription("Create a new profile for a customer", Entities.UserRole.Manager, "[name] [password]") },
             { Entities.CommandNames.updateuser, new Entities.CommandDescription("Update the password of a user", Entities.UserRole.Manager, "[name] [new password] [repeat password]") },
-            { Entities.CommandNames.createbranch, new Entities.CommandDescription("Create a new branch", Entities.UserRole.Admin) },
+            { Entities.CommandNames.createbranch, new Entities.CommandDescription("Create a new branch", Entities.UserRole.Admin, "[name]") },
             { Entities.CommandNames.listfleets, new Entities.CommandDescription("List all of your fleets", Entities.UserRole.Manager, "[fleetname]") },
             { Entities.CommandNames.createfleet, new Entities.CommandDescription("Create a new fleet and add to the branch", Entities.UserRole.Manager, "[fleetname] [branchname]") },
             { Entities.CommandNames.deletefleet, new Entities.CommandDescription("Delete a fleet and remove from the branch", Entities.UserRole.Manager, "[name] [branchname]") },
@@ -36,6 +34,9 @@ namespace EvilCar
             { Entities.CommandNames.calculatecosts, new Entities.CommandDescription("Calculate the costs for a car. You can book spotify, navigation, parker, massage (limo only)", Entities.UserRole.Manager, "[car guid] [fleetname] [branchname] [hours] [services, ...]")}
         };
 
+        // User: Admin, PW: Admin123
+        //      Manager, Manager123
+        //      User, Admin123
         static void Main(string[] args)
         {
             var xmlDoc = XDocument.Load(DATA_FILENAME);
@@ -90,7 +91,7 @@ namespace EvilCar
                                     break;
                                 // quit
                                 case nameof(Entities.CommandNames.quit):
-                                    db.safe("Profiles.xml");
+                                    db.safe(DATA_FILENAME);
                                     return;
                                 // list admins
                                 case nameof(Entities.CommandNames.listadmins):
@@ -123,9 +124,24 @@ namespace EvilCar
                                     {
                                         var user = db.getUser(command_args[1]);
                                         if (user != null && user.Role == Entities.UserRole.Manager)
+                                        {
                                             Console.WriteLine($"Name: {user.Name}");
+
+                                            Console.WriteLine("Assigned fleets:");
+                                            foreach(var fleet in db.GetFleets(user.Name))
+                                            {
+                                                Console.WriteLine($"\t{fleet.Name}");
+                                                Console.WriteLine($"\tCars of the fleet:");
+                                                foreach(var car in db.GetCarsFromFleet(user.Name, fleet.Branch, fleet.Name))
+                                                {
+                                                    Console.WriteLine($"\t\t{car.Guid}, Booked?: {car.IsBooked}, Limo?: {car.IsLimo}");
+                                                }
+                                            }
+                                        }
                                         else
+                                        {
                                             Console.WriteLine($"User \"{user.Name}\" does not exist");
+                                        }
                                     }
                                     break;
                                 // create admin
@@ -140,7 +156,7 @@ namespace EvilCar
                                     break;
                                 // create manager
                                 case nameof(Entities.CommandNames.createmanager):
-                                    if(CheckCommandAccessibility(profile, Entities.CommandNames.createmanager) && CheckCommandArguments(command_args, 3))
+                                    if(CheckCommandAccessibility(profile, Entities.CommandNames.createmanager) && CheckCommandArguments(command_args, 2))
                                     {
                                         if(db.CreateUser(command_args[1], command_args[2], Entities.UserRole.Manager))
                                             Console.WriteLine($"Your created \"{command_args[1]}\"");

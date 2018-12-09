@@ -20,9 +20,9 @@
         listfleets,
         createfleet,
         deletefleet,
-        caradd,
+        addcar,
         calculatecosts,
-        cardel,
+        deletecar,
         listcars
     }
 

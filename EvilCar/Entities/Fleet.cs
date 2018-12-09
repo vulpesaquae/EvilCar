@@ -8,10 +8,10 @@ namespace EvilCar
 {
     public class Fleet
     {
-        public List<Car> cars = new List<Car>();
-        public string Name;
-        public string Manager;
-        public string Branch;
+        public List<Car> Cars { get; } = new List<Car>();
+        public string Name { get; }
+        public string Manager { get; }
+        public string Branch { get; }
 
         public Fleet(string name, string managerName, string branchName)
         {
@@ -25,7 +25,7 @@ namespace EvilCar
             Name = name;
             Manager = managerName;
             Branch = branchName;
-            this.cars = cars;
+            this.Cars = cars;
         }
     }
 }

@@ -17,8 +17,8 @@ namespace EvilCar
 
         public Car(string name, bool isLimo)
         {
-            this.Name = name;
-            this.IsLimo = isLimo;
+            Name = name;
+            IsLimo = isLimo;
         }
 
         public bool IsBooked { get;  set; } = false;

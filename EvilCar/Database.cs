@@ -13,11 +13,6 @@ namespace EvilCar
         List<User> allUsers = new List<User>();
         List<Branch> allBranches = new List<Branch>();
 
-        private Database()
-        {
-
-        }
-
         /// <summary>
         /// Load the database
         /// </summary>
@@ -50,7 +45,7 @@ namespace EvilCar
                         var fleetname = fleet.Element(nameof(Fleet.Name)).Value;
                         var managername = fleet.Element(nameof(Fleet.Manager)).Value;
                         Fleet newFleet = new Fleet(fleetname, managername, branchname);
-                        
+
                         foreach(var car in fleet.Descendants(nameof(Car)))
                         {
                             var carname = car.Element(nameof(Car.Name)).Value;
@@ -58,7 +53,7 @@ namespace EvilCar
                             var isLimo = false;
                             if (isLimo_s.ToLower() == "true" || isLimo_s == "1")
                                 isLimo = true;
-                            newFleet.cars.Add(new Car(carname, isLimo));
+                            newFleet.Cars.Add(new Car(carname, isLimo));
                         }
 
                         fleets.Add(newFleet);
@@ -111,15 +106,21 @@ namespace EvilCar
                         xfleet.Add(new XElement(nameof(Fleet.Name), fleet.Name));
                         xfleet.Add(new XElement(nameof(Fleet.Manager), fleet.Manager));
 
-                        foreach(var car in fleet.cars)
+                        if (fleet.Cars.Any())
                         {
-                            var xCar = new XElement(nameof(Car));
-                            xCar.Add(new XElement(nameof(Car.Name), car.Name));
-                            xCar.Add(new XElement(nameof(Car.IsLimo), car.IsLimo));
+                            var xcars = new XElement(nameof(Fleet.Cars));
 
-                            xfleet.Add(xCar);
+                            foreach (var car in fleet.Cars)
+                            {
+                                var xcar = new XElement(nameof(Car));
+                                xcar.Add(new XElement(nameof(Car.Name), car.Name));
+                                xcar.Add(new XElement(nameof(Car.IsLimo), car.IsLimo));
+
+                                xcars.Add(xcar);
+                            }
+
+                            xfleet.Add(xcars);
                         }
-
                         xfleets.Add(xfleet);
                     }
 
@@ -230,6 +231,8 @@ namespace EvilCar
             return false;
         }
 
+        // the "E-Mail"
+        // wait 5 seconds and than print something to the console
         private async Task SendInformation(string content)
         {
             await Task.Run(() =>
@@ -288,85 +291,41 @@ namespace EvilCar
         /// <summary>
         /// Get a fleet by its name
         /// </summary>
-        /// <param name="fleetname">the fleets name you looking for</param>
-        /// <returns>the fleet if it exists, otherwise null</returns>
-        private Fleet GetFleet(string branchname, string fleetname)
-        {
-            foreach(Branch branch in allBranches)
-            {
-                if (branch.Name.ToLower() == branchname.ToLower())
-                {
-                    foreach (Fleet f in branch.Fleets)
-                    {
-                        if (f.Name.ToLower() == fleetname.ToLower())
-                        {
-                            return f;
-                        }
-                    }
-                }
-            }
-            return null;
-        }
+        /// <param name="fleetname">Fleets name you looking for</param>
+        /// <returns>Fleet if it exists, otherwise null</returns>
+        private Fleet GetFleet(string managername, string branchname, string fleetname) => allBranches.SingleOrDefault(x => x.Name.ToLower() == branchname.ToLower())
+            ?.Fleets.SingleOrDefault(x => x.Name.ToLower() == fleetname.ToLower() && x.Manager.ToLower() == managername.ToLower());
 
-        public IEnumerable<Car> GetCarsFromFleet(string branchname, string fleetname)
-        {
-            Fleet f = GetFleet(branchname, fleetname);
-            if(f == null)
-                return null;
-            return f.cars.ToList();
-        }
+        public IEnumerable<Car> GetCarsFromFleet(string managername, string branchname, string fleetname) => GetFleet(managername, branchname, fleetname)?.Cars;
 
-        public bool AddCarToFleet(string branchname, string fleetname, Car newCar)
+        public bool AddCarToFleet(string managername, string branchname, string fleetname, Car newCar)
         {
-            Fleet fleet = GetFleet(branchname, fleetname);
-            if (fleet == null)
-                return false;
-            foreach(Car car in fleet.cars)
+            var fleet = GetFleet(managername, branchname, fleetname);
+            if (fleet != null && !fleet.Cars.Any(x => x.Name.ToLower() == newCar.Name.ToLower()))
             {
-                if(car.Name.ToLower() == newCar.Name.ToLower())
-                {
-                    return false;
-                }
-            }
-            fleet.cars.Add(newCar);
-            return true;
-        }
-
-        public bool DeleteCarFromFleet(string branchname, string fleetname, string carname)
-        {
-            Fleet fleet = GetFleet(branchname, fleetname);
-            if(fleet == null)
-                return false;
-            Car toDelete = null;
-            foreach(Car curr in fleet.cars)
-            {
-                if(curr.Name.ToLower() == carname.ToLower())
-                {
-                    toDelete = curr;
-                    break;
-                }
-            }
-            if (toDelete != null)
-            {
-                fleet.cars.Remove(toDelete);
+                fleet.Cars.Add(newCar);
                 return true;
             }
-            else
-            {
-                return false;
-            }
+            return false;
         }
 
-        public Car GetCar(string branchname, string fleetname, string carname)
+        public bool DeleteCarFromFleet(string managername, string branchname, string fleetname, string carname)
         {
-            IEnumerable<Car> cars = GetCarsFromFleet(branchname, fleetname);
-            foreach(Car c in cars)
+            var fleet = GetFleet(managername, branchname, fleetname);
+            if(fleet != null)
             {
-                if (c.Name.ToLower() == carname.ToLower())
-                    return c;
+                var car = fleet.Cars.SingleOrDefault(x => x.Name.ToLower() == carname.ToLower());
+                if(car != null)
+                {
+                    fleet.Cars.Remove(car);
+                    return true;
+                }
             }
-            return null;
+            return false;
         }
+
+        public Car GetCar(string managername, string branchname, string fleetname, string carname) => GetFleet(managername, branchname, fleetname).Cars.SingleOrDefault(x => x.Name.ToLower() == carname.ToLower());
+
         #endregion Branch Tasks
 
         #region Base64

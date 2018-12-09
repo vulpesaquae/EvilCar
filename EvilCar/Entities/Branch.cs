@@ -11,18 +11,18 @@ namespace EvilCar
     // Achim und ich hatten uns erstmal drauf geeinigt, dass das wie eine Flotte ist...
     public class Branch
     {
-        public string Name;
-        public List<Fleet> Fleets = new List<Fleet>();
+        public string Name { get; }
+        public List<Fleet> Fleets { get; } = new List<Fleet>();
 
         public Branch(string name)
         {
-            this.Name = name;
+            Name = name;
         }
 
         public Branch(string name, List<Fleet> fleets)
         {
-            this.Name = name;
-            this.Fleets = fleets;
+            Name = name;
+            Fleets = fleets;
         }
     }
 }

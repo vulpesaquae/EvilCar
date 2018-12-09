@@ -21,18 +21,20 @@
       <Fleet>
         <Name>Nord</Name>
         <Manager>Manager</Manager>
-        <Car>
-          <Name>1</Name>
-          <IsLimo>true</IsLimo>
-        </Car>
-        <Car>
-          <Name>2</Name>
-          <IsLimo>true</IsLimo>
-        </Car>
-        <Car>
-          <Name>3</Name>
-          <IsLimo>true</IsLimo>
-        </Car>
+        <Cars>
+          <Car>
+            <Name>1</Name>
+            <IsLimo>true</IsLimo>
+          </Car>
+          <Car>
+            <Name>2</Name>
+            <IsLimo>true</IsLimo>
+          </Car>
+          <Car>
+            <Name>3</Name>
+            <IsLimo>true</IsLimo>
+          </Car>
+        </Cars>
       </Fleet>
       <Fleet>
         <Name>Mitte</Name>

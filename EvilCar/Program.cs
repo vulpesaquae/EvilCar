@@ -30,10 +30,10 @@ namespace EvilCar
             { Entities.CommandNames.listfleets, new Entities.CommandDescription("List all of your fleets", Entities.UserRole.Manager, "[fleetname]") },
             { Entities.CommandNames.createfleet, new Entities.CommandDescription("Create a new branch", Entities.UserRole.Manager, "[fleetname] [branchname]") },
             { Entities.CommandNames.deletefleet, new Entities.CommandDescription("Delete a fleet and remove from the branch", Entities.UserRole.Manager, "[name] [branchname]") },
-            { Entities.CommandNames.caradd, new Entities.CommandDescription("Add a car to a fleet", Entities.UserRole.Manager, "[carname] [fleetname] [branchname] [isLimo]" )},
-            { Entities.CommandNames.cardel, new Entities.CommandDescription("Delete a car from a fleet", Entities.UserRole.Manager, "[carname] [fleetname] [branchname]" )},
+            { Entities.CommandNames.addcar, new Entities.CommandDescription("Add a car to a fleet", Entities.UserRole.Manager, "[carname] [fleetname] [branchname] [isLimo = true/false]" )},
+            { Entities.CommandNames.deletecar, new Entities.CommandDescription("Delete a car from a fleet", Entities.UserRole.Manager, "[carname] [fleetname] [branchname]" )},
             { Entities.CommandNames.listcars, new Entities.CommandDescription("List all cars of a fleet", Entities.UserRole.Manager, "[branchname] [fleetname]" )},
-            { Entities.CommandNames.calculatecosts, new Entities.CommandDescription("Calculate the costs for a car. You can book spotify, navigation, parker, massage (limo only)", Entities.UserRole.Manager, "[carname] [branchname] [fleetname] [hours] [services...]")}
+            { Entities.CommandNames.calculatecosts, new Entities.CommandDescription("Calculate the costs for a car. You can book spotify, navigation, parker, massage (limo only)", Entities.UserRole.Manager, "[carname] [branchname] [fleetname] [hours] [services, ...]")}
         };
 
         static void Main(string[] args)
@@ -72,8 +72,6 @@ namespace EvilCar
                     {
                         Console.WriteLine("Enter the command you want to execute. If you don't know them, enter help");
 
-                        //TODO Commands Zeug
-                        // TODO: die einzelnen case zweige in jeweils eine eigene funktion auslagern??
                         string[] command_args = Console.ReadLine().Split(' ');
                         if(command_args.Length > 0)
                         {
@@ -221,38 +219,35 @@ namespace EvilCar
                                     }
                                     break;
                                 // add a car to a fleet
-                                case nameof(Entities.CommandNames.caradd):
-                                    if (CheckCommandAccessibility(profile, Entities.CommandNames.caradd) && CheckCommandArguments(command_args, 4))
+                                case nameof(Entities.CommandNames.addcar):
+                                    if (CheckCommandAccessibility(profile, Entities.CommandNames.addcar) && CheckCommandArguments(command_args, 4))
                                     {
                                         bool isLimo = false;
                                         if (command_args[4].ToLower() == "1" || command_args[4].ToLower() == "true")
                                             isLimo = true;
+
                                         Car newCar = new Car(command_args[1], isLimo);
-                                        if(db.AddCarToFleet(command_args[3], command_args[2], newCar))
-                                        {
+                                        if(db.AddCarToFleet(profile.Name, command_args[3], command_args[2], newCar))
                                             Console.WriteLine($"Added the car \"{newCar.Name}\" to the fleet \"{command_args[2]}\"");
-                                        }
                                         else
-                                        {
-                                            Console.WriteLine("There went something wrong with your arguments");
-                                        }
+                                            Console.WriteLine($"Cannot add car \"{newCar.Name}\" to the fleet \"{command_args[2]}\"");
                                     }
                                     break;
                                 // delete a car from a fleet
-                                case nameof(Entities.CommandNames.cardel):
-                                    if (CheckCommandAccessibility(profile, Entities.CommandNames.cardel) && CheckCommandArguments(command_args, 2))
+                                case nameof(Entities.CommandNames.deletecar):
+                                    if (CheckCommandAccessibility(profile, Entities.CommandNames.deletecar) && CheckCommandArguments(command_args, 2))
                                     {
-                                        if(db.DeleteCarFromFleet(command_args[3], command_args[2], command_args[1]))
-                                        {
+                                        if (db.DeleteCarFromFleet(profile.Name, command_args[3], command_args[2], command_args[1]))
                                             Console.WriteLine($"The Car \"{command_args[1]}\" was successfully deleted from the fleet \"{command_args[2]}\"");
-                                        }
+                                        else
+                                            Console.WriteLine($"Cannot delete \"{command_args[1]}\"");
                                     }
                                     break;
                                 // list all the cars from a fleet
                                 case nameof(Entities.CommandNames.listcars):
                                     if(CheckCommandAccessibility(profile, Entities.CommandNames.listcars) && CheckCommandArguments(command_args, 2))
                                     {
-                                        IEnumerable<Car> cars = db.GetCarsFromFleet(command_args[1], command_args[2]);
+                                        IEnumerable<Car> cars = db.GetCarsFromFleet(profile.Name, command_args[1], command_args[2]);
                                         if(cars != null)
                                         {
                                             foreach(Car c in cars)
@@ -311,7 +306,7 @@ namespace EvilCar
                                                 case "navigation": navigation = true; break;
                                             }
                                         }
-                                        Car car = db.GetCar(branchname, fleetname, carname);
+                                        Car car = db.GetCar(profile.Name, branchname, fleetname, carname);
                                         if(car != null)
                                         {
                                             float costs = CalculateCost(car, hours, spotify, massage, parker, navigation);

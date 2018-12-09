@@ -181,7 +181,6 @@ namespace EvilCar
         /// <param name="role">Role of the user</param>
         public bool CreateUser(string username, string plainPassword, Entities.UserRole role)
         {
-            // TODO: create manager with a fleet
             if (!checkUsername(username) && plainPassword.Any())
             {
                 allUsers.Add(new User(username, Base64Encode(plainPassword), role));
@@ -248,6 +247,11 @@ namespace EvilCar
 
         private Branch GetBranch(string name) => allBranches.SingleOrDefault(x => x.Name.ToLower() == name.ToLower());
 
+        /// <summary>
+        /// Create a new branch
+        /// </summary>
+        /// <param name="name">Name of the branch to create</param>
+        /// <returns>True if branch was created, false if not</returns>
         public bool CreateBranch(string name)
         {
             if(!allBranches.Any(x => x.Name.ToLower() == name.ToLower()))
@@ -258,6 +262,14 @@ namespace EvilCar
             return false;
         }
 
+        /// <summary>
+        /// Create a new fleet for a branch
+        /// </summary>
+        /// <param name="branchName">Name of the branch to add the fleet to</param>
+        /// <param name="fleetName">Name of the fleet to create</param>
+        /// <param name="managerName">Name of the manager assigend to this new fleet</param>
+        /// <param name="cars">Cars the fleet contains</param>
+        /// <returns>True if the fleet was created, false if not</returns>
         public bool CreateFleet(string branchName, string fleetName, string managerName, List<Car> cars = null)
         {
             var branch = GetBranch(branchName);
@@ -271,6 +283,13 @@ namespace EvilCar
             return false;
         }
 
+        /// <summary>
+        /// Delete a fleet from a branch
+        /// </summary>
+        /// <param name="branchName">Name of the branch to delete the fleet from</param>
+        /// <param name="fleetName">Name of the fleet to delete</param>
+        /// <param name="managerName">Name of the manager assigned to the fleet</param>
+        /// <returns></returns>
         public bool DeleteFleet(string branchName, string fleetName, string managerName)
         {
             var branch = GetBranch(branchName);
@@ -286,18 +305,40 @@ namespace EvilCar
             return false;
         }
 
+        /// <summary>
+        /// Get all fleets assigned to a specific manager
+        /// </summary>
+        /// <param name="managerName">Name of the manager assigned to the fleets</param>
+        /// <returns></returns>
         public IEnumerable<Fleet> GetFleets(string managerName) => allBranches.SelectMany(x => x.Fleets.Where(y => y.Manager.ToLower() == managerName.ToLower()));
 
         /// <summary>
         /// Get a fleet by its name
         /// </summary>
+        /// <param name="managername">Name of the manager assigned to the fleet</param>
+        /// <param name="branchname">Name of the branch the fleet is part of</param>
         /// <param name="fleetname">Fleets name you looking for</param>
         /// <returns>Fleet if it exists, otherwise null</returns>
         private Fleet GetFleet(string managername, string branchname, string fleetname) => allBranches.SingleOrDefault(x => x.Name.ToLower() == branchname.ToLower())
             ?.Fleets.SingleOrDefault(x => x.Name.ToLower() == fleetname.ToLower() && x.Manager.ToLower() == managername.ToLower());
 
+        /// <summary>
+        /// Get all cars of a specific fleet
+        /// </summary>
+        /// <param name="managername">Name of the manager assigned to the fleet</param>
+        /// <param name="branchname">Name of the branch the fleet is part of</param>
+        /// <param name="fleetname">Fleets name you want to get the cars from</param>
+        /// <returns></returns>
         public IEnumerable<Car> GetCarsFromFleet(string managername, string branchname, string fleetname) => GetFleet(managername, branchname, fleetname)?.Cars;
 
+        /// <summary>
+        /// Add a new to to a fleet
+        /// </summary>
+        /// <param name="managername">Name of the manager assigned to the fleet</param>
+        /// <param name="branchname">Name of the branch the fleet is part of</param>
+        /// <param name="fleetname">Name of the fleet the car should be added</param>
+        /// <param name="newCar">Car object representing the new car</param>
+        /// <returns>True if the new car was added, false if not</returns>
         public bool AddCarToFleet(string managername, string branchname, string fleetname, Car newCar)
         {
             var fleet = GetFleet(managername, branchname, fleetname);
@@ -309,6 +350,14 @@ namespace EvilCar
             return false;
         }
 
+        /// <summary>
+        /// Delete a car from a fleet
+        /// </summary>
+        /// <param name="managername">Name of the manager assigned to the fleet</param>
+        /// <param name="branchname">Name of the branch the fleet is part of</param>
+        /// <param name="fleetname">Name of the fleet the car should be added</param>
+        /// <param name="carname">Name of the car to delete</param>
+        /// <returns></returns>
         public bool DeleteCarFromFleet(string managername, string branchname, string fleetname, string carname)
         {
             var fleet = GetFleet(managername, branchname, fleetname);
@@ -324,6 +373,14 @@ namespace EvilCar
             return false;
         }
 
+        /// <summary>
+        /// Get a specific car
+        /// </summary>
+        /// <param name="managername">Name of the manager assigned to the fleet</param>
+        /// <param name="branchname">Name of the branch the fleet is part of</param>
+        /// <param name="fleetname">Name of the fleet the car should be added</param>
+        /// <param name="carname">Name of the car to get</param>
+        /// <returns></returns>
         public Car GetCar(string managername, string branchname, string fleetname, string carname) => GetFleet(managername, branchname, fleetname).Cars.SingleOrDefault(x => x.Name.ToLower() == carname.ToLower());
 
         #endregion Branch Tasks

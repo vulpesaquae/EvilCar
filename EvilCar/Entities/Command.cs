@@ -17,6 +17,7 @@
         createuser,
         updateuser,
         createbranch,
+        listfleets,
         createfleet,
         deletefleet
     }

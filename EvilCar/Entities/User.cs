@@ -8,14 +8,14 @@ namespace EvilCar
 {
     public class User
     {
-        public string password;
-        public string name;
-        public Entities.UserRole role;
+        public string Password;
+        public string Name;
+        public Entities.UserRole Role;
 
         public User(string name, string password, Entities.UserRole role) {
-            this.name = name;
-            this.password = password;
-            this.role = role;
+            Name = name;
+            Password = password;
+            Role = role;
         }
 
         public Car RentedCar { get; private set; }

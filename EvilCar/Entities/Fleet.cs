@@ -9,19 +9,22 @@ namespace EvilCar
     public class Fleet
     {
         List<Car> cars = new List<Car>();
-        public string name;
-        public string ManagerName;
+        public string Name;
+        public string Manager;
+        public string Branch;
 
-        public Fleet(string name, string ManagerName)
+        public Fleet(string name, string managerName, string branchName)
         {
-            this.name = name;
-            this.ManagerName = ManagerName;
+            Name = name;
+            Manager = managerName;
+            Branch = branchName;
         }
 
-        public Fleet(string name, string ManagerName, List<Car> cars)
+        public Fleet(string name, string managerName, string branchName, List<Car> cars)
         {
-            this.name = name;
-            this.ManagerName = ManagerName;
+            Name = name;
+            Manager = managerName;
+            Branch = branchName;
             this.cars = cars;
         }
 

@@ -30,26 +30,26 @@ namespace EvilCar
             try
             {
                 // Create all Profiles as User's
-                foreach(var profile in doc.Descendants("Profile"))
+                foreach(var profile in doc.Descendants(nameof(User)))
                 {
-                    var name = profile.Element("Name").Value;
-                    var password = profile.Element("Password").Value;
-                    var role = profile.Element("Role").Value;
+                    var name = profile.Element(nameof(User.Name)).Value;
+                    var password = profile.Element(nameof(User.Password)).Value;
+                    var role = profile.Element(nameof(User.Role)).Value;
 
                     db.allUsers.Add(new User(name, password, (Entities.UserRole)Enum.Parse(typeof(Entities.UserRole), role)));
                 }
 
                 // Create all branches
-                foreach(var branch in doc.Descendants("Branch"))
+                foreach(var branch in doc.Descendants(nameof(Branch)))
                 {
-                    var branchname = branch.Element("Name").Value;
+                    var branchname = branch.Element(nameof(Branch.Name)).Value;
                     var fleets = new List<Fleet>();
 
-                    foreach(var fleet in branch.Descendants("Fleet"))
+                    foreach(var fleet in branch.Descendants(nameof(Fleet)))
                     {
-                        var fleetname = fleet.Element("Name").Value;
-                        var managername = fleet.Element("Manager").Value;
-                        fleets.Add(new Fleet(fleetname, managername));
+                        var fleetname = fleet.Element(nameof(Fleet.Name)).Value;
+                        var managername = fleet.Element(nameof(Fleet.Manager)).Value;
+                        fleets.Add(new Fleet(fleetname, managername, branchname));
                     }
 
                     db.allBranches.Add(new Branch(branchname, fleets));
@@ -71,33 +71,33 @@ namespace EvilCar
         public void safe(string path)
         {
             XDocument xmlDoc = new XDocument();
-            var evilcars = new XElement("EvilCars");
+            var evilcars = new XElement(nameof(EvilCar));
 
             foreach (var user in allUsers)
             {
-                var xuser = new XElement("Profile");
-                xuser.Add(new XElement("Name", user.name));
-                xuser.Add(new XElement("Password", user.password));
-                xuser.Add(new XElement("Role", user.role));
+                var xuser = new XElement(nameof(User));
+                xuser.Add(new XElement(nameof(User.Name), user.Name));
+                xuser.Add(new XElement(nameof(User.Password), user.Password));
+                xuser.Add(new XElement(nameof(User.Role), user.Role));
                 evilcars.Add(xuser);
             }
 
             // safe all branches
             foreach(var branch in allBranches)
             {
-                var xbranch = new XElement("Branch");
-                xbranch.Add(new XElement("Name", branch.name));
+                var xbranch = new XElement(nameof(Branch));
+                xbranch.Add(new XElement(nameof(Branch.Name), branch.Name));
 
                 // safe all fleets of the branch
-                if (branch.fleets.Any())
+                if (branch.Fleets.Any())
                 {
-                    var xfleets = new XElement("Fleets");
+                    var xfleets = new XElement(nameof(Branch.Fleets));
 
-                    foreach (var fleet in branch.fleets)
+                    foreach (var fleet in branch.Fleets)
                     {
-                        var xfleet = new XElement("Fleet");
-                        xfleet.Add(new XElement("Name", fleet.name));
-                        xfleet.Add(new XElement("Manager", fleet.ManagerName));
+                        var xfleet = new XElement(nameof(Fleet));
+                        xfleet.Add(new XElement(nameof(Fleet.Name), fleet.Name));
+                        xfleet.Add(new XElement(nameof(Fleet.Manager), fleet.Manager));
 
                         xfleets.Add(xfleet);
                     }
@@ -118,7 +118,7 @@ namespace EvilCar
         /// </summary>
         /// <param name="username">the username you want to check</param>
         /// <returns>true if the username is in the database</returns>
-        public bool checkUsername(string username) => allUsers.Any(x => x.name.ToLower() == username.ToLower());
+        public bool checkUsername(string username) => allUsers.Any(x => x.Name.ToLower() == username.ToLower());
 
         /// <summary>
         /// Check if the username and password are valid for a certain profile
@@ -132,7 +132,7 @@ namespace EvilCar
 
             if(user != null)
             {
-                return password == Base64Decode(user.password);
+                return password == Base64Decode(user.Password);
             }
             return false;
         }
@@ -142,14 +142,14 @@ namespace EvilCar
         /// </summary>
         /// <param name="username">the name of the user you want to get</param>
         /// <returns>User Object that has the username or null if there is no User with that name</returns>
-        public User getUser(string username) => allUsers.SingleOrDefault(x => x.name.ToLower() == username.ToLower());
+        public User getUser(string username) => allUsers.SingleOrDefault(x => x.Name.ToLower() == username.ToLower());
 
         /// <summary>
         /// Get a list of users with a specified role
         /// </summary>
         /// <param name="role">Role the user must have</param>
         /// <returns>List of users with a specified role</returns>
-        public IEnumerable<User> GetUsersFromRole(Entities.UserRole role) => allUsers.Where(x => x.role == role);
+        public IEnumerable<User> GetUsersFromRole(Entities.UserRole role) => allUsers.Where(x => x.Role == role);
 
         /// <summary>
         /// Add a new User object to the database
@@ -178,7 +178,7 @@ namespace EvilCar
             var user = getUser(username);
             // there is a user AND user is not a manager OR there is more than one manager
             // delete the manager only, if there are 2 or more
-            if (user != null && (user.role != Entities.UserRole.Manager || allUsers.Count(x => x.role == Entities.UserRole.Manager) > 1))
+            if (user != null && (user.Role != Entities.UserRole.Manager || allUsers.Count(x => x.Role == Entities.UserRole.Manager) > 1))
             {
                 return allUsers.Remove(user);
             }
@@ -196,7 +196,7 @@ namespace EvilCar
             var user = getUser(username);
             if(user != null)
             {
-                user.password = Base64Encode(newPlainPassword);
+                user.Password = Base64Encode(newPlainPassword);
 
                 var content = "*************************\n\n" + $"Hello {username}! Your password was changed to \"{newPlainPassword}\"." + "\n\n*************************";
                 // fire and forget
@@ -222,11 +222,11 @@ namespace EvilCar
 
         #region Branch Tasks
 
-        private Branch GetBranch(string name) => allBranches.SingleOrDefault(x => x.name.ToLower() == name.ToLower());
+        private Branch GetBranch(string name) => allBranches.SingleOrDefault(x => x.Name.ToLower() == name.ToLower());
 
         public bool CreateBranch(string name)
         {
-            if(!allBranches.Any(x => x.name.ToLower() == name.ToLower()))
+            if(!allBranches.Any(x => x.Name.ToLower() == name.ToLower()))
             {
                 allBranches.Add(new Branch(name));
                 return true;
@@ -237,10 +237,10 @@ namespace EvilCar
         public bool CreateFleet(string branchName, string fleetName, string managerName, List<Car> cars = null)
         {
             var branch = GetBranch(branchName);
-            if(branch != null && !branch.fleets.Any(x => x.name.ToLower() == fleetName.ToLower()))
+            if(branch != null && !branch.Fleets.Any(x => x.Name.ToLower() == fleetName.ToLower()))
             {
-                var fleet = new Fleet(fleetName, managerName);
-                branch.fleets.Add(fleet);
+                var fleet = new Fleet(fleetName, managerName, branch.Name);
+                branch.Fleets.Add(fleet);
 
                 return true;
             }
@@ -252,15 +252,17 @@ namespace EvilCar
             var branch = GetBranch(branchName);
             if(branch != null)
             {
-                var fleet = branch.fleets.SingleOrDefault(x => x.name.ToLower() == fleetName.ToLower());
-                if(fleet != null && fleet.ManagerName == managerName)
+                var fleet = branch.Fleets.SingleOrDefault(x => x.Name.ToLower() == fleetName.ToLower());
+                if(fleet != null && fleet.Manager == managerName)
                 {
-                    branch.fleets.Remove(fleet);
+                    branch.Fleets.Remove(fleet);
                     return true;
                 }
             }
             return false;
         }
+
+        public IEnumerable<Fleet> GetFleets(string managerName) => allBranches.SelectMany(x => x.Fleets.Where(y => y.Manager.ToLower() == managerName.ToLower()));
 
         #endregion Branch Tasks
 

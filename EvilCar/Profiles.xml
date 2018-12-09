@@ -1,32 +1,35 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<EvilCars>
-  <Profile>
+<EvilCar>
+  <User>
     <Name>Admin</Name>
     <Password>QWRtaW4xMjM=</Password>
     <Role>Admin</Role>
-  </Profile>
-  <Profile>
+  </User>
+  <User>
     <Name>Manager</Name>
     <Password>QWRtaW4xMjM=</Password>
     <Role>Manager</Role>
-  </Profile>
-  <Profile>
+  </User>
+  <User>
     <Name>User</Name>
     <Password>QWRtaW4xMjM=</Password>
     <Role>User</Role>
-  </Profile>
+  </User>
   <Branch>
     <Name>Stuttgart</Name>
     <Fleets>
       <Fleet>
         <Name>Nord</Name>
+        <Manager>Manager</Manager>
       </Fleet>
       <Fleet>
         <Name>Mitte</Name>
+        <Manager>Manager</Manager>
       </Fleet>
       <Fleet>
         <Name>Süd</Name>
+        <Manager>Manager</Manager>
       </Fleet>
     </Fleets>
   </Branch>
-</EvilCars>
+</EvilCar>

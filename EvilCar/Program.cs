@@ -7,7 +7,7 @@ namespace EvilCar
 {
     class Program
     {
-        public const string PROFILES_FILENAME = "Profiles.xml";
+        public const string DATA_FILENAME = "EvilCar.xml";
 
         // so können wir alle commands bei help relativ einfach anzeigen lassen
         // auf die rollen können auch einfach überprüft werden
@@ -28,17 +28,17 @@ namespace EvilCar
             { Entities.CommandNames.updateuser, new Entities.CommandDescription("Update the password of a user", Entities.UserRole.Manager, "[name] [new password] [repeat password]") },
             { Entities.CommandNames.createbranch, new Entities.CommandDescription("Create a new branch", Entities.UserRole.Admin) },
             { Entities.CommandNames.listfleets, new Entities.CommandDescription("List all of your fleets", Entities.UserRole.Manager, "[fleetname]") },
-            { Entities.CommandNames.createfleet, new Entities.CommandDescription("Create a new branch", Entities.UserRole.Manager, "[fleetname] [branchname]") },
+            { Entities.CommandNames.createfleet, new Entities.CommandDescription("Create a new fleet and add to the branch", Entities.UserRole.Manager, "[fleetname] [branchname]") },
             { Entities.CommandNames.deletefleet, new Entities.CommandDescription("Delete a fleet and remove from the branch", Entities.UserRole.Manager, "[name] [branchname]") },
-            { Entities.CommandNames.addcar, new Entities.CommandDescription("Add a car to a fleet", Entities.UserRole.Manager, "[carname] [fleetname] [branchname] [isLimo = true/false]" )},
-            { Entities.CommandNames.deletecar, new Entities.CommandDescription("Delete a car from a fleet", Entities.UserRole.Manager, "[carname] [fleetname] [branchname]" )},
-            { Entities.CommandNames.listcars, new Entities.CommandDescription("List all cars of a fleet", Entities.UserRole.Manager, "[branchname] [fleetname]" )},
-            { Entities.CommandNames.calculatecosts, new Entities.CommandDescription("Calculate the costs for a car. You can book spotify, navigation, parker, massage (limo only)", Entities.UserRole.Manager, "[carname] [branchname] [fleetname] [hours] [services, ...]")}
+            { Entities.CommandNames.createcar, new Entities.CommandDescription("Create a new car and add to the fleet", Entities.UserRole.Manager, "[fleetname] [branchname] [isLimo = true/false]" )},
+            { Entities.CommandNames.deletecar, new Entities.CommandDescription("Delete a car from a fleet", Entities.UserRole.Manager, "[car guid] [fleetname] [branchname]" )},
+            { Entities.CommandNames.listcars, new Entities.CommandDescription("List all cars of a fleet", Entities.UserRole.Manager, "[fleetname] [branchname]" )},
+            { Entities.CommandNames.calculatecosts, new Entities.CommandDescription("Calculate the costs for a car. You can book spotify, navigation, parker, massage (limo only)", Entities.UserRole.Manager, "[car guid] [fleetname] [branchname] [hours] [services, ...]")}
         };
 
         static void Main(string[] args)
         {
-            var xmlDoc = XDocument.Load("Profiles.xml");
+            var xmlDoc = XDocument.Load(DATA_FILENAME);
 
             Database db = Database.buildFromXMl(xmlDoc);
 
@@ -219,62 +219,68 @@ namespace EvilCar
                                     }
                                     break;
                                 // add a car to a fleet
-                                case nameof(Entities.CommandNames.addcar):
-                                    if (CheckCommandAccessibility(profile, Entities.CommandNames.addcar) && CheckCommandArguments(command_args, 4))
+                                case nameof(Entities.CommandNames.createcar):
+                                    if (CheckCommandAccessibility(profile, Entities.CommandNames.createcar) && CheckCommandArguments(command_args, 3))
                                     {
                                         bool isLimo = false;
-                                        if (command_args[4].ToLower() == "1" || command_args[4].ToLower() == "true")
+                                        if (command_args[3].ToLower() == "1" || command_args[3].ToLower() == "true")
                                             isLimo = true;
 
-                                        Car newCar = new Car(command_args[1], isLimo);
-                                        if(db.AddCarToFleet(profile.Name, command_args[3], command_args[2], newCar))
-                                            Console.WriteLine($"Added the car \"{newCar.Name}\" to the fleet \"{command_args[2]}\"");
+                                        if(db.CreateCar(profile.Name, command_args[2], command_args[1], isLimo))
+                                            Console.WriteLine($"Created the new car and added it to the fleet \"{command_args[2]}\"");
                                         else
-                                            Console.WriteLine($"Cannot add car \"{newCar.Name}\" to the fleet \"{command_args[2]}\"");
+                                            Console.WriteLine($"Cannot create car for the fleet \"{command_args[2]}\"");
                                     }
                                     break;
                                 // delete a car from a fleet
                                 case nameof(Entities.CommandNames.deletecar):
                                     if (CheckCommandAccessibility(profile, Entities.CommandNames.deletecar) && CheckCommandArguments(command_args, 2))
                                     {
-                                        if (db.DeleteCarFromFleet(profile.Name, command_args[3], command_args[2], command_args[1]))
-                                            Console.WriteLine($"The Car \"{command_args[1]}\" was successfully deleted from the fleet \"{command_args[2]}\"");
-                                        else
-                                            Console.WriteLine($"Cannot delete \"{command_args[1]}\"");
+                                        try
+                                        {
+                                            if (db.DeleteCarFromFleet(profile.Name, command_args[3], command_args[2], int.Parse(command_args[1])))
+                                                Console.WriteLine($"The Car \"{command_args[1]}\" was successfully deleted from the fleet \"{command_args[2]}\"");
+                                            else
+                                                Console.WriteLine($"Cannot delete \"{command_args[1]}\"");
+                                        }
+                                        catch(FormatException ex)
+                                        {
+                                            Console.WriteLine($"The GUID \"{command_args[1]}\" is not valid");
+                                        }
                                     }
                                     break;
                                 // list all the cars from a fleet
                                 case nameof(Entities.CommandNames.listcars):
                                     if(CheckCommandAccessibility(profile, Entities.CommandNames.listcars) && CheckCommandArguments(command_args, 2))
                                     {
-                                        IEnumerable<Car> cars = db.GetCarsFromFleet(profile.Name, command_args[1], command_args[2]);
+                                        var cars = db.GetCarsFromFleet(profile.Name, command_args[2], command_args[1]);
                                         if(cars != null)
                                         {
-                                            foreach(Car c in cars)
+                                            foreach(Car car in cars)
                                             {
-                                                if (c.IsLimo)
+                                                if (car.IsLimo)
                                                 {
-                                                    if (c.IsBooked)
-                                                        Console.WriteLine($"limousine {c.Name}, booked");
+                                                    if (car.IsBooked)
+                                                        Console.WriteLine($"GUID: {car.Guid}, Limousine, booked");
                                                     else
-                                                        Console.WriteLine($"limousine {c.Name}, free");
+                                                        Console.WriteLine($"GUID: {car.Guid}, Limousine, free");
                                                 }
                                                 else
                                                 {
-                                                    if (c.IsBooked)
-                                                        Console.WriteLine($"Car {c.Name}, booked");
+                                                    if (car.IsBooked)
+                                                        Console.WriteLine($"GUID: {car.Guid}, Car, booked");
                                                     else
-                                                        Console.WriteLine($"Car {c.Name}, free");
+                                                        Console.WriteLine($"GUID: {car.Guid}, Car, booked");
                                                 }
                                             }
                                             if(cars.Count() == 0)
                                             {
-                                                Console.WriteLine($"There are no cars in the fleet \"{command_args[2]}\"");
+                                                Console.WriteLine($"There are no cars in the fleet \"{command_args[1]}\"");
                                             }
                                         }
                                         else
                                         {
-                                            Console.WriteLine($"there went something wrong with your fleet- or branchname");
+                                            Console.WriteLine($"There went something wrong with your fleet- or branchname");
                                         }
                                     }
                                     break;
@@ -282,23 +288,24 @@ namespace EvilCar
                                 case nameof(Entities.CommandNames.calculatecosts):
                                     if(CheckCommandAccessibility(profile, Entities.CommandNames.calculatecosts) && CheckCommandArguments(command_args, 5))
                                     {
-                                        string carname = command_args[1];
-                                        string branchname = command_args[2];
-                                        string fleetname = command_args[3];
+                                        var guid = 0;
+                                        string branchname = command_args[3];
+                                        string fleetname = command_args[2];
                                         float hours = 0;
                                         try
                                         {
+                                            guid = int.Parse(command_args[1]);
                                             hours = float.Parse(command_args[4]);
                                         }
-                                        catch (FormatException e)
+                                        catch (FormatException)
                                         {
-                                            Console.WriteLine($"{command_args[4]} is not a number...");
+                                            Console.WriteLine($"Argument 1 or 4 ar not valid");
                                             continue;
                                         }
                                         bool parker = false, spotify = false, massage = false, navigation = false;
                                         for(int i = 5; i<command_args.Length; i++)
                                         {
-                                            switch (command_args[i])
+                                            switch (command_args[i].ToLower())
                                             {
                                                 case "parker": parker = true; break;
                                                 case "spotify": spotify = true; break;
@@ -306,14 +313,15 @@ namespace EvilCar
                                                 case "navigation": navigation = true; break;
                                             }
                                         }
-                                        Car car = db.GetCar(profile.Name, branchname, fleetname, carname);
-                                        if(car != null)
+
+                                        var car = db.GetCar(profile.Name, branchname, fleetname, guid);
+                                        if (car != null)
                                         {
                                             float costs = CalculateCost(car, hours, spotify, massage, parker, navigation);
-                                            if(!car.IsLimo)
-                                                Console.Write($"You want to book {carname}\nwith");
+                                            if (!car.IsLimo)
+                                                Console.Write($"You want to book {guid}\nwith");
                                             else
-                                                Console.Write($"You want to book limousine {carname} for {hours}h\nwith ");
+                                                Console.Write($"You want to book limousine {guid} for {hours}h\nwith ");
 
                                             bool isFirst = true;
                                             if (parker)
@@ -406,23 +414,33 @@ namespace EvilCar
 
         #endregion Check Command
 
+        /// <summary>
+        /// Calculate the costs for a car
+        /// </summary>
+        /// <param name="car">Car object to calculate the costs from</param>
+        /// <param name="hours">Hours you want to rent the car</param>
+        /// <param name="spotify">Book spotify?</param>
+        /// <param name="massage">Book massage?</param>
+        /// <param name="parker">Book parker?</param>
+        /// <param name="navigation">Book navigation?</param>
+        /// <returns>Cost for the specified hours</returns>
         public static float CalculateCost(Car car, float hours, bool spotify, bool massage, bool parker, bool navigation)
         {
-            float perHour = 9.95F;
+            float costsPerHour = 9.95F;
 
             if (spotify)
-                perHour += 2;
+                costsPerHour += 2;
             if (parker)
-                perHour += 2;
+                costsPerHour += 2;
             if (navigation)
-                perHour += 4;
+                costsPerHour += 4;
             if (car.IsLimo)
             {
-                perHour += 5;
+                costsPerHour += 5;
                 if (massage)
-                    perHour += 5;
+                    costsPerHour += 5;
             }
-            return hours * perHour;
+            return hours * costsPerHour;
         }
     }
 }

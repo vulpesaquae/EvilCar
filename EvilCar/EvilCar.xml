@@ -23,15 +23,15 @@
         <Manager>Manager</Manager>
         <Cars>
           <Car>
-            <Name>1</Name>
+            <Guid>1</Guid>
             <IsLimo>true</IsLimo>
           </Car>
           <Car>
-            <Name>2</Name>
+            <Guid>2</Guid>
             <IsLimo>true</IsLimo>
           </Car>
           <Car>
-            <Name>3</Name>
+            <Guid>3</Guid>
             <IsLimo>true</IsLimo>
           </Car>
         </Cars>

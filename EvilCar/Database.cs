@@ -48,12 +48,14 @@ namespace EvilCar
 
                         foreach(var car in fleet.Descendants(nameof(Car)))
                         {
-                            var carname = car.Element(nameof(Car.Name)).Value;
+                            var guid = car.Element(nameof(Car.Guid)).Value;
+
                             var isLimo_s = car.Element(nameof(Car.IsLimo)).Value;
                             var isLimo = false;
                             if (isLimo_s.ToLower() == "true" || isLimo_s == "1")
                                 isLimo = true;
-                            newFleet.Cars.Add(new Car(carname, isLimo));
+
+                            newFleet.Cars.Add(new Car(int.Parse(guid), isLimo));
                         }
 
                         fleets.Add(newFleet);
@@ -113,7 +115,7 @@ namespace EvilCar
                             foreach (var car in fleet.Cars)
                             {
                                 var xcar = new XElement(nameof(Car));
-                                xcar.Add(new XElement(nameof(Car.Name), car.Name));
+                                xcar.Add(new XElement(nameof(Car.Guid), car.Guid));
                                 xcar.Add(new XElement(nameof(Car.IsLimo), car.IsLimo));
 
                                 xcars.Add(xcar);
@@ -270,7 +272,7 @@ namespace EvilCar
         /// <param name="managerName">Name of the manager assigend to this new fleet</param>
         /// <param name="cars">Cars the fleet contains</param>
         /// <returns>True if the fleet was created, false if not</returns>
-        public bool CreateFleet(string branchName, string fleetName, string managerName, List<Car> cars = null)
+        public bool CreateFleet(string branchName, string fleetName, string managerName)
         {
             var branch = GetBranch(branchName);
             if(branch != null && !branch.Fleets.Any(x => x.Name.ToLower() == fleetName.ToLower()))
@@ -339,12 +341,12 @@ namespace EvilCar
         /// <param name="fleetname">Name of the fleet the car should be added</param>
         /// <param name="newCar">Car object representing the new car</param>
         /// <returns>True if the new car was added, false if not</returns>
-        public bool AddCarToFleet(string managername, string branchname, string fleetname, Car newCar)
+        public bool CreateCar(string managername, string branchname, string fleetname, bool isLimo)
         {
             var fleet = GetFleet(managername, branchname, fleetname);
-            if (fleet != null && !fleet.Cars.Any(x => x.Name.ToLower() == newCar.Name.ToLower()))
+            if (fleet != null)
             {
-                fleet.Cars.Add(newCar);
+                fleet.Cars.Add(new Car(fleet.Cars.Count(), isLimo));
                 return true;
             }
             return false;
@@ -356,14 +358,14 @@ namespace EvilCar
         /// <param name="managername">Name of the manager assigned to the fleet</param>
         /// <param name="branchname">Name of the branch the fleet is part of</param>
         /// <param name="fleetname">Name of the fleet the car should be added</param>
-        /// <param name="carname">Name of the car to delete</param>
+        /// <param name="carGuid">GUID of the car to delete</param>
         /// <returns></returns>
-        public bool DeleteCarFromFleet(string managername, string branchname, string fleetname, string carname)
+        public bool DeleteCarFromFleet(string managername, string branchname, string fleetname, int carGuid)
         {
             var fleet = GetFleet(managername, branchname, fleetname);
             if(fleet != null)
             {
-                var car = fleet.Cars.SingleOrDefault(x => x.Name.ToLower() == carname.ToLower());
+                var car = fleet.Cars.SingleOrDefault(x => x.Guid == carGuid);
                 if(car != null)
                 {
                     fleet.Cars.Remove(car);
@@ -379,9 +381,9 @@ namespace EvilCar
         /// <param name="managername">Name of the manager assigned to the fleet</param>
         /// <param name="branchname">Name of the branch the fleet is part of</param>
         /// <param name="fleetname">Name of the fleet the car should be added</param>
-        /// <param name="carname">Name of the car to get</param>
+        /// <param name="carGuid">Name of the car to get</param>
         /// <returns></returns>
-        public Car GetCar(string managername, string branchname, string fleetname, string carname) => GetFleet(managername, branchname, fleetname).Cars.SingleOrDefault(x => x.Name.ToLower() == carname.ToLower());
+        public Car GetCar(string managername, string branchname, string fleetname, int carGuid) => GetFleet(managername, branchname, fleetname).Cars.SingleOrDefault(x => x.Guid == carGuid);
 
         #endregion Branch Tasks
 

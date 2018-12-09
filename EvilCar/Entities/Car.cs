@@ -8,21 +8,14 @@ namespace EvilCar
 {
     public class Car
     {
+        public bool IsBooked { get; set; } = false;
+        public bool IsLimo { get; }
+        public int Guid { get; }
 
-        // müssen die noch mit dem Preis verbinden.
-        public enum BookableServices
+        public Car(int guid, bool isLimo)
         {
-            Spotify, Parker, Navigation, Massage
-        }
-
-        public Car(string name, bool isLimo)
-        {
-            Name = name;
+            Guid = guid;
             IsLimo = isLimo;
         }
-
-        public bool IsBooked { get;  set; } = false;
-        public bool IsLimo { get; }
-        public string Name { get; }
     }
 }

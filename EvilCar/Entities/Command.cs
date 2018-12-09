@@ -20,10 +20,10 @@
         listfleets,
         createfleet,
         deletefleet,
-        addcar,
-        calculatecosts,
+        listcars,
+        createcar,
         deletecar,
-        listcars
+        calculatecosts
     }
 
     public struct CommandDescription

@@ -17,7 +17,8 @@
         createuser,
         updateuser,
         createbranch,
-        createfleet
+        createfleet,
+        deletefleet
     }
 
     public struct CommandDescription

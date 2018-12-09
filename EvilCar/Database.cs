@@ -243,6 +243,21 @@ namespace EvilCar
             return false;
         }
 
+        public bool DeleteFleet(string branchName, string fleetName)
+        {
+            var branch = allBranches.SingleOrDefault(x => x.name == branchName);
+            if(branch != null)
+            {
+                var fleet = branch.fleets.SingleOrDefault(x => x.name == fleetName);
+                if(fleet != null)
+                {
+                    branch.fleets.Remove(fleet);
+                    return true;
+                }
+            }
+            return false;
+        }
+
         #endregion Branch Tasks
 
         #region Base64

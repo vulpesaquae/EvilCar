@@ -27,7 +27,7 @@ namespace EvilCar
             { Entities.CommandNames.createuser, new Entities.CommandDescription("Create a new profile for a customer", Entities.UserRole.Manager, "[name] [password]") },
             { Entities.CommandNames.updateuser, new Entities.CommandDescription("Update the password of a user", Entities.UserRole.Manager, "[name] [new password] [repeat password]") },
             { Entities.CommandNames.createbranch, new Entities.CommandDescription("Create a new branch", Entities.UserRole.Admin, "[name]") },
-            { Entities.CommandNames.createfleet, new Entities.CommandDescription("Create a new fleet", Entities.UserRole.Manager, "[name] [branchname]") }
+            { Entities.CommandNames.deletefleet, new Entities.CommandDescription("Delete a fleet and remove from the branch", Entities.UserRole.Manager, "[name] [branchname]") }
         };
 
         static void Main(string[] args)
@@ -103,7 +103,7 @@ namespace EvilCar
                                         if(user != null && user.role == Entities.UserRole.Admin)
                                             Console.WriteLine($"Name: {user.name}");
                                         else
-                                            Console.WriteLine($"User {user.name} does not exist");
+                                            Console.WriteLine($"User \"{user.name}\" does not exist");
                                     }
                                     break;
                                 // list manager
@@ -121,7 +121,7 @@ namespace EvilCar
                                         if (user != null && user.role == Entities.UserRole.Manager)
                                             Console.WriteLine($"Name: {user.name}");
                                         else
-                                            Console.WriteLine($"User {user.name} does not exist");
+                                            Console.WriteLine($"User \"{user.name}\" does not exist");
                                     }
                                     break;
                                 // create admin
@@ -159,9 +159,9 @@ namespace EvilCar
                                     if(CheckCommandAccessibility(profile, Entities.CommandNames.updatemanager) && CheckCommandArguments(command_args, 3))
                                     {
                                         if (db.getUser(command_args[1]).role == Entities.UserRole.Manager && command_args[2] == command_args[3] && db.UpdateUser(command_args[1], command_args[2]))
-                                            Console.WriteLine($"Successfully changed the password of {command_args[1]}. He will be informed.");
+                                            Console.WriteLine($"Successfully changed the password of \"{command_args[1]}\". He will be informed.");
                                         else
-                                            Console.WriteLine($"Cannot change password of {command_args[1]}");
+                                            Console.WriteLine($"Cannot change password of \"{command_args[1]}\"");
                                     }
                                     break;
                                 // update profile
@@ -169,9 +169,9 @@ namespace EvilCar
                                     if (CheckCommandAccessibility(profile, Entities.CommandNames.updatemanager) && CheckCommandArguments(command_args, 2))
                                     {
                                         if (command_args[1] == command_args[2] && db.UpdateUser(profile.name, command_args[1]))
-                                            Console.WriteLine($"Successfully changed the password of {command_args[1]}. He will be informed.");
+                                            Console.WriteLine($"Successfully changed the password of \"{command_args[1]}\". He will be informed.");
                                         else
-                                            Console.WriteLine($"Cannot change password of {profile.name}");
+                                            Console.WriteLine($"Cannot change password of \"{profile.name}\"");
                                     }
                                     break;
                                 // create branch
@@ -179,9 +179,9 @@ namespace EvilCar
                                     if(CheckCommandAccessibility(profile, Entities.CommandNames.createbranch) && CheckCommandArguments(command_args, 1))
                                     {
                                         if (db.CreateBranch(command_args[1]))
-                                            Console.WriteLine($"Created branch {command_args[1]}");
+                                            Console.WriteLine($"Created branch \"{command_args[1]}\"");
                                         else
-                                            Console.WriteLine($"Cannot create branch {command_args[1]}");
+                                            Console.WriteLine($"Cannot create branch \"{command_args[1]}\"");
                                     }
                                     break;
                                 // create fleet
@@ -192,6 +192,16 @@ namespace EvilCar
                                             Console.WriteLine($"Created fleet {command_args[1]}");
                                         else
                                             Console.WriteLine($"Cannot create fleet {command_args[1]}");
+                                    }
+                                    break;
+                                // delete fleet
+                                case nameof(Entities.CommandNames.deletefleet):
+                                    if (CheckCommandAccessibility(profile, Entities.CommandNames.deletefleet) && CheckCommandArguments(command_args, 2))
+                                    {
+                                        if (db.DeleteFleet(command_args[2], command_args[1]))
+                                            Console.WriteLine($"Deleted fleet {command_args[1]}");
+                                        else
+                                            Console.WriteLine($"Cannot delete fleet {command_args[1]}");
                                     }
                                     break;
                                 //

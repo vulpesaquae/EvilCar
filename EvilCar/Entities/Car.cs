@@ -8,7 +8,6 @@ namespace EvilCar
 {
     public class Car
     {
-        public float Costs { get; }
 
         // müssen die noch mit dem Preis verbinden.
         public enum BookableServices
@@ -16,6 +15,14 @@ namespace EvilCar
             Spotify, Parker, Navigation, Massage
         }
 
+        public Car(string name, bool isLimo)
+        {
+            this.Name = name;
+            this.IsLimo = isLimo;
+        }
+
         public bool IsBooked { get;  set; } = false;
+        public bool IsLimo { get; }
+        public string Name { get; }
     }
 }

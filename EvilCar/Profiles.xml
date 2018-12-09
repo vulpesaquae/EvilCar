@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <EvilCar>
   <User>
     <Name>Admin</Name>
@@ -21,6 +21,18 @@
       <Fleet>
         <Name>Nord</Name>
         <Manager>Manager</Manager>
+        <Car>
+          <Name>1</Name>
+          <IsLimo>true</IsLimo>
+        </Car>
+        <Car>
+          <Name>2</Name>
+          <IsLimo>true</IsLimo>
+        </Car>
+        <Car>
+          <Name>3</Name>
+          <IsLimo>true</IsLimo>
+        </Car>
       </Fleet>
       <Fleet>
         <Name>Mitte</Name>

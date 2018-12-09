@@ -8,7 +8,7 @@ namespace EvilCar
 {
     public class Fleet
     {
-        List<Car> cars = new List<Car>();
+        public List<Car> cars = new List<Car>();
         public string Name;
         public string Manager;
         public string Branch;
@@ -27,7 +27,5 @@ namespace EvilCar
             Branch = branchName;
             this.cars = cars;
         }
-
-        public void add(Car car) => cars.Add(car);
     }
 }

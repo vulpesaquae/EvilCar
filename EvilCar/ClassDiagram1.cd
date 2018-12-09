@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="EvilCar.Car">
+    <Position X="7.75" Y="0.5" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Enum Name="EvilCar.Car.BookableServices">
+        <TypeIdentifier>
+          <NewMemberFileName>Entities\Car.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAIAAAAAAAAQAAAAAAAAAAAAAAAAAEAA=</HashCode>
+      <FileName>Entities\Car.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EvilCar.Database">
+    <Position X="0.5" Y="0.5" Width="3.75" />
+    <Members>
+      <Method Name="Database" Hidden="true" />
+      <Method Name="GetBranch" Hidden="true" />
+      <Method Name="GetFleet" Hidden="true" />
+      <Method Name="SendInformation" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>IQEBBACAAQKAAAEACAAAEAEAAQIAACAhAAAAMBgBAAA=</HashCode>
+      <FileName>Database.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EvilCar.Program">
+    <Position X="4.5" Y="0.5" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAACgAAAAAAAAAAAAAAAAACAAAAAIAAAAAAJAAAAAA=</HashCode>
+      <FileName>Program.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EvilCar.Branch">
+    <Position X="9.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAACAAA=</HashCode>
+      <FileName>Entities\Branch.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EvilCar.Fleet">
+    <Position X="9.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAgAAAAAAAAQAAAAABAgAAAAAAAAAAAA=</HashCode>
+      <FileName>Entities\Fleet.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EvilCar.User">
+    <Position X="7.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAEAAAABUQAAAAAAACAAAAAAAAAAA=</HashCode>
+      <FileName>Entities\User.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="Entities.CommandDescription">
+    <Position X="4.5" Y="3" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAIAAAABAAAAAgAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entities\Command.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Enum Name="Entities.CommandNames">
+    <Position X="11.25" Y="0.5" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAhgAAQCgAAEEAAAgAIAAAAAAAAAAIBCFABAEBQA=</HashCode>
+      <FileName>Entities\Command.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Entities.UserRole">
+    <Position X="9.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAAAAAAAAAAAAQAAAAAABAAAAAAAAAAAACA=</HashCode>
+      <FileName>Entities\UserRole.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

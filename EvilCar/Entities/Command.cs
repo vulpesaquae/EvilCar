@@ -19,7 +19,11 @@
         createbranch,
         listfleets,
         createfleet,
-        deletefleet
+        deletefleet,
+        caradd,
+        calculatecosts,
+        cardel,
+        listcars
     }
 
     public struct CommandDescription

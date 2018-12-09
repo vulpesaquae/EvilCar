@@ -220,11 +220,24 @@ namespace EvilCar
 
         #region Branch Tasks
 
-        public bool CreateBranch(string name, List<Fleet> fleets = null)
+        public bool CreateBranch(string name)
         {
-            if(allBranches.All(x => x.name != name))
+            if(!allBranches.Any(x => x.name == name))
             {
-                allBranches.Add(new Branch(name, fleets));
+                allBranches.Add(new Branch(name));
+                return true;
+            }
+            return false;
+        }
+
+        public bool CreateFleet(string branchName, string fleetName, List<Car> cars = null)
+        {
+            var branch = allBranches.SingleOrDefault(x => x.name == branchName);
+            if(branch != null && !branch.fleets.Any(x => x.name == fleetName))
+            {
+                var fleet = new Fleet(fleetName);
+                branch.fleets.Add(fleet);
+
                 return true;
             }
             return false;

@@ -16,6 +16,12 @@ namespace EvilCar
             this.name = name;
         }
 
+        public Fleet(string name, List<Car> cars)
+        {
+            this.name = name;
+            this.cars = cars;
+        }
+
         public void add(Car car) => cars.Add(car);
     }
 }

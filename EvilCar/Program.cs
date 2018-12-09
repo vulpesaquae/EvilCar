@@ -26,7 +26,8 @@ namespace EvilCar
             { Entities.CommandNames.readuser, new Entities.CommandDescription("Read data of a user", Entities.UserRole.Manager, "[name]") },
             { Entities.CommandNames.createuser, new Entities.CommandDescription("Create a new profile for a customer", Entities.UserRole.Manager, "[name] [password]") },
             { Entities.CommandNames.updateuser, new Entities.CommandDescription("Update the password of a user", Entities.UserRole.Manager, "[name] [new password] [repeat password]") },
-            { Entities.CommandNames.createbranch, new Entities.CommandDescription("Create a new branch", Entities.UserRole.Admin, "[name] [fleet, ...]") }
+            { Entities.CommandNames.createbranch, new Entities.CommandDescription("Create a new branch", Entities.UserRole.Admin, "[name]") },
+            { Entities.CommandNames.createfleet, new Entities.CommandDescription("Create a new fleet", Entities.UserRole.Manager, "[name] [branchname]") }
         };
 
         static void Main(string[] args)
@@ -181,6 +182,16 @@ namespace EvilCar
                                             Console.WriteLine($"Created branch {command_args[1]}");
                                         else
                                             Console.WriteLine($"Cannot create branch {command_args[1]}");
+                                    }
+                                    break;
+                                // create fleet
+                                case nameof(Entities.CommandNames.createfleet):
+                                    if (CheckCommandAccessibility(profile, Entities.CommandNames.createfleet) && CheckCommandArguments(command_args, 2))
+                                    {
+                                        if (db.CreateFleet(command_args[2], command_args[1]))
+                                            Console.WriteLine($"Created fleet {command_args[1]}");
+                                        else
+                                            Console.WriteLine($"Cannot create fleet {command_args[1]}");
                                     }
                                     break;
                                 //

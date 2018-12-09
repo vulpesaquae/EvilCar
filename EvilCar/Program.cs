@@ -27,6 +27,7 @@ namespace EvilCar
             { Entities.CommandNames.createuser, new Entities.CommandDescription("Create a new profile for a customer", Entities.UserRole.Manager, "[name] [password]") },
             { Entities.CommandNames.updateuser, new Entities.CommandDescription("Update the password of a user", Entities.UserRole.Manager, "[name] [new password] [repeat password]") },
             { Entities.CommandNames.createbranch, new Entities.CommandDescription("Create a new branch", Entities.UserRole.Admin, "[name]") },
+            { Entities.CommandNames.createfleet, new Entities.CommandDescription("Create a new branch", Entities.UserRole.Manager, "[fleetname] [branchname]") },
             { Entities.CommandNames.deletefleet, new Entities.CommandDescription("Delete a fleet and remove from the branch", Entities.UserRole.Manager, "[name] [branchname]") }
         };
 
@@ -188,7 +189,7 @@ namespace EvilCar
                                 case nameof(Entities.CommandNames.createfleet):
                                     if (CheckCommandAccessibility(profile, Entities.CommandNames.createfleet) && CheckCommandArguments(command_args, 2))
                                     {
-                                        if (db.CreateFleet(command_args[2], command_args[1]))
+                                        if (db.CreateFleet(command_args[2], command_args[1], profile.name))
                                             Console.WriteLine($"Created fleet {command_args[1]}");
                                         else
                                             Console.WriteLine($"Cannot create fleet {command_args[1]}");
@@ -198,7 +199,7 @@ namespace EvilCar
                                 case nameof(Entities.CommandNames.deletefleet):
                                     if (CheckCommandAccessibility(profile, Entities.CommandNames.deletefleet) && CheckCommandArguments(command_args, 2))
                                     {
-                                        if (db.DeleteFleet(command_args[2], command_args[1]))
+                                        if (db.DeleteFleet(command_args[2], command_args[1], profile.name))
                                             Console.WriteLine($"Deleted fleet {command_args[1]}");
                                         else
                                             Console.WriteLine($"Cannot delete fleet {command_args[1]}");

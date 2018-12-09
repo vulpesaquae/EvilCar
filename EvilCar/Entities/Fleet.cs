@@ -10,15 +10,18 @@ namespace EvilCar
     {
         List<Car> cars = new List<Car>();
         public string name;
+        public string ManagerName;
 
-        public Fleet(string name)
+        public Fleet(string name, string ManagerName)
         {
             this.name = name;
+            this.ManagerName = ManagerName;
         }
 
-        public Fleet(string name, List<Car> cars)
+        public Fleet(string name, string ManagerName, List<Car> cars)
         {
             this.name = name;
+            this.ManagerName = ManagerName;
             this.cars = cars;
         }
 

@@ -48,7 +48,8 @@ namespace EvilCar
                     foreach(var fleet in branch.Descendants("Fleet"))
                     {
                         var fleetname = fleet.Element("Name").Value;
-                        fleets.Add(new Fleet(fleetname));
+                        var managername = fleet.Element("Manager").Value;
+                        fleets.Add(new Fleet(fleetname, managername));
                     }
 
                     db.allBranches.Add(new Branch(branchname, fleets));
@@ -96,6 +97,7 @@ namespace EvilCar
                     {
                         var xfleet = new XElement("Fleet");
                         xfleet.Add(new XElement("Name", fleet.name));
+                        xfleet.Add(new XElement("Manager", fleet.ManagerName));
 
                         xfleets.Add(xfleet);
                     }
@@ -220,9 +222,11 @@ namespace EvilCar
 
         #region Branch Tasks
 
+        private Branch GetBranch(string name) => allBranches.SingleOrDefault(x => x.name.ToLower() == name.ToLower());
+
         public bool CreateBranch(string name)
         {
-            if(!allBranches.Any(x => x.name == name))
+            if(!allBranches.Any(x => x.name.ToLower() == name.ToLower()))
             {
                 allBranches.Add(new Branch(name));
                 return true;
@@ -230,12 +234,12 @@ namespace EvilCar
             return false;
         }
 
-        public bool CreateFleet(string branchName, string fleetName, List<Car> cars = null)
+        public bool CreateFleet(string branchName, string fleetName, string managerName, List<Car> cars = null)
         {
-            var branch = allBranches.SingleOrDefault(x => x.name == branchName);
-            if(branch != null && !branch.fleets.Any(x => x.name == fleetName))
+            var branch = GetBranch(branchName);
+            if(branch != null && !branch.fleets.Any(x => x.name.ToLower() == fleetName.ToLower()))
             {
-                var fleet = new Fleet(fleetName);
+                var fleet = new Fleet(fleetName, managerName);
                 branch.fleets.Add(fleet);
 
                 return true;
@@ -243,13 +247,13 @@ namespace EvilCar
             return false;
         }
 
-        public bool DeleteFleet(string branchName, string fleetName)
+        public bool DeleteFleet(string branchName, string fleetName, string managerName)
         {
-            var branch = allBranches.SingleOrDefault(x => x.name == branchName);
+            var branch = GetBranch(branchName);
             if(branch != null)
             {
-                var fleet = branch.fleets.SingleOrDefault(x => x.name == fleetName);
-                if(fleet != null)
+                var fleet = branch.fleets.SingleOrDefault(x => x.name.ToLower() == fleetName.ToLower());
+                if(fleet != null && fleet.ManagerName == managerName)
                 {
                     branch.fleets.Remove(fleet);
                     return true;

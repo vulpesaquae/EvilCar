@@ -21,6 +21,7 @@ namespace EvilCar
             { Entities.CommandNames.deletemanager, new Entities.CommandDescription("Delete a fleet manager", Entities.UserRole.Admin, "[name]") },
             { Entities.CommandNames.updatemanager, new Entities.CommandDescription("Update the password of a fleet manager", Entities.UserRole.Admin, "[name] [new password] [repeat password]") },
             { Entities.CommandNames.updateprofile, new Entities.CommandDescription("Update the password of your own profile", Entities.UserRole.Undefined, "[new password] [repeat password]") },
+            { Entities.CommandNames.listusers, new Entities.CommandDescription("List all existing user's", Entities.UserRole.Manager) },
             { Entities.CommandNames.readuser, new Entities.CommandDescription("Read data of a user", Entities.UserRole.Manager, "[name]") },
             { Entities.CommandNames.createuser, new Entities.CommandDescription("Create a new profile for a customer", Entities.UserRole.Manager, "[name] [password]") },
             { Entities.CommandNames.updateuser, new Entities.CommandDescription("Update the password of a user", Entities.UserRole.Manager, "[name] [new password] [repeat password]") },
@@ -81,7 +82,7 @@ namespace EvilCar
                             {
                                 // help
                                 case nameof(Entities.CommandNames.help):
-                                    foreach(var key in Commands.Keys)
+                                    foreach (var key in Commands.Keys)
                                     {
                                         if (profile.Role == Commands[key].role || Commands[key].role == Entities.UserRole.Undefined)
                                         {
@@ -95,9 +96,12 @@ namespace EvilCar
                                     return;
                                 // list admins
                                 case nameof(Entities.CommandNames.listadmins):
-                                    foreach(var user in db.GetUsersFromRole(Entities.UserRole.Admin))
+                                    if (CheckCommandAccessibility(profile, Entities.CommandNames.listadmins))
                                     {
-                                        Console.WriteLine(user.Name);
+                                        foreach (var user in db.GetUsersFromRole(Entities.UserRole.Admin))
+                                        {
+                                            Console.WriteLine(user.Name);
+                                        }
                                     }
                                     break;
                                 // read admin
@@ -113,9 +117,12 @@ namespace EvilCar
                                     break;
                                 // list manager
                                 case nameof(Entities.CommandNames.listmanagers):
-                                    foreach (var user in db.GetUsersFromRole(Entities.UserRole.Manager))
+                                    if (CheckCommandAccessibility(profile, Entities.CommandNames.listmanagers))
                                     {
-                                        Console.WriteLine(user.Name);
+                                        foreach (var user in db.GetUsersFromRole(Entities.UserRole.Manager))
+                                        {
+                                            Console.WriteLine(user.Name);
+                                        }
                                     }
                                     break;
                                 // read manager
@@ -202,6 +209,47 @@ namespace EvilCar
                                             Console.WriteLine($"Created branch \"{command_args[1]}\"");
                                         else
                                             Console.WriteLine($"Cannot create branch \"{command_args[1]}\"");
+                                    }
+                                    break;
+                                // list users
+                                case nameof(Entities.CommandNames.listusers):
+                                    if (CheckCommandAccessibility(profile, Entities.CommandNames.listusers))
+                                    {
+                                        foreach (var user in db.GetUsersFromRole(Entities.UserRole.User))
+                                        {
+                                            Console.WriteLine(user.Name);
+                                        }
+                                    }
+                                    break;
+                                // read user
+                                case nameof(Entities.CommandNames.readuser):
+                                    if (CheckCommandAccessibility(profile, Entities.CommandNames.readuser) && CheckCommandArguments(command_args, 1))
+                                    {
+                                        var user = db.getUser(command_args[1]);
+                                        if (user != null && user.Role == Entities.UserRole.User)
+                                            Console.WriteLine($"Name: {user.Name}");
+                                        else
+                                            Console.WriteLine($"User \"{user.Name}\" does not exist");
+                                    }
+                                    break;
+                                // create user
+                                case nameof(Entities.CommandNames.createuser):
+                                    if (CheckCommandAccessibility(profile, Entities.CommandNames.createuser) && CheckCommandArguments(command_args, 2))
+                                    {
+                                        if (db.CreateUser(command_args[1], command_args[2], Entities.UserRole.User))
+                                            Console.WriteLine($"Your created \"{command_args[1]}\"");
+                                        else
+                                            Console.WriteLine($"Cannot create \"{command_args[1]}\"");
+                                    }
+                                    break;
+                                // update user
+                                case nameof(Entities.CommandNames.updateuser):
+                                    if (CheckCommandAccessibility(profile, Entities.CommandNames.updateuser) && CheckCommandArguments(command_args, 3))
+                                    {
+                                        if (db.getUser(command_args[1]).Role == Entities.UserRole.User && command_args[2] == command_args[3] && db.UpdateUser(command_args[1], command_args[2]))
+                                            Console.WriteLine($"Successfully changed the password of \"{command_args[1]}\". He will be informed.");
+                                        else
+                                            Console.WriteLine($"Cannot change password of \"{command_args[1]}\"");
                                     }
                                     break;
                                 // list fleets

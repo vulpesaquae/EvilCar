@@ -13,6 +13,7 @@
         deletemanager,
         updatemanager,
         updateprofile,
+        listusers,
         readuser,
         createuser,
         updateuser,

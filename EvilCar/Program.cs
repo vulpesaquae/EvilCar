@@ -140,7 +140,7 @@ namespace EvilCar
                                         }
                                         else
                                         {
-                                            Console.WriteLine($"User \"{user.Name}\" does not exist");
+                                            Console.WriteLine($"User \"{command_args[1]}\" does not exist");
                                         }
                                     }
                                     break;

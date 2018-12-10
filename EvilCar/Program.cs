@@ -84,9 +84,9 @@ namespace EvilCar
                                 case nameof(Entities.CommandNames.help):
                                     foreach (var key in Commands.Keys)
                                     {
-                                        if (profile.Role == Commands[key].role || Commands[key].role == Entities.UserRole.Undefined)
+                                        if (profile.Role == Commands[key].Role || Commands[key].Role == Entities.UserRole.Undefined)
                                         {
-                                            Console.WriteLine($"\n{key} {Commands[key].arguments}\n{Commands[key].description}");
+                                            Console.WriteLine($"\n{key} {Commands[key].Arguments}\n{Commands[key].Description}");
                                         }
                                     }
                                     break;
@@ -440,7 +440,7 @@ namespace EvilCar
         // check if the user is allowed to execute the command
         private static bool CheckCommandAccessibility(User profile, Entities.CommandNames commandName)
         {
-            if (!(profile.Role == Commands[commandName].role) || Commands[commandName].role == Entities.UserRole.Undefined)
+            if (!(profile.Role == Commands[commandName].Role) || Commands[commandName].Role == Entities.UserRole.Undefined)
             {
                 Console.WriteLine("You have not the rights to execute this command.");
                 return false;

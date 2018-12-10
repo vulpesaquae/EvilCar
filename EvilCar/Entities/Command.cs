@@ -29,15 +29,15 @@
 
     public struct CommandDescription
     {
-        public string description;
-        public string arguments;
-        public UserRole role;
+        public string Description { get; }
+        public string Arguments { get; }
+        public UserRole Role { get; }
 
         public CommandDescription(string description, UserRole role, string arguments = "")
         {
-            this.description = description;
-            this.role = role;
-            this.arguments = arguments;
+            Description = description;
+            Role = role;
+            Arguments = arguments;
         }
     }
 }
